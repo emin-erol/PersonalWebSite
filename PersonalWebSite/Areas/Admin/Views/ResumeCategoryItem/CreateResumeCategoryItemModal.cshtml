@@ -1,0 +1,110 @@
+﻿@model CreateResumeCategoryItemDto
+
+@{
+    ViewData["Title"] = "CreateResumeCategoryItemModal";
+    Layout = "~/Areas/Admin/Views/UILayout/Index.cshtml";
+    var techsIUsed = ViewBag.TechsIUsed as Dictionary<int,string>;
+    var resumeCategories = ViewBag.ResumeCategories as Dictionary<int,string>;
+    int techCount = techsIUsed!.Count;
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Yeni Resume Kategori Elemanı Girişi</h4>
+                        <p class="card-subtitle mb-4">
+                            Eklemek istediğiniz yeni Resume Kategori Elemanı alanını lütfen doğru giriniz ve kaydet butonuna basınız.
+                        </p>
+                        <form id="resumeCategoryForm" method="post" asp-action="CreateResumeCategoryItem" asp-controller="ResumeCategoryItem">
+                            
+                            <input type="hidden" name="ItemTechesJson" id="itemTechesJson" />
+                            
+                            <div class="form-group">
+                                <label for="ResumeCategoryId">Resume Kategori</label>
+                                <select asp-for="ResumeCategoryId" class="form-control">
+                                    <option value="" selected disabled>Bir Kategori Seçiniz</option>
+                                    @foreach(var resumeCategory in resumeCategories!)
+                                    {
+                                        <option value="@resumeCategory.Key">@resumeCategory.Value</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="title">Konu Başlığı</label>
+                                <input type="text" class="form-control" id="title" asp-for="Title" placeholder="Konu Başlığını Giriniz" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="startDate">Başlangıç Tarihi</label>
+                                <input type="date" class="form-control" id="startDate" asp-for="StartDate">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="endDate">Bitiş Tarihi</label>
+                                <input type="date" class="form-control" id="endDate" asp-for="EndDate">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="iconUrl">İkon Linki</label>
+                                <input type="text" class="form-control" id="iconUrl" asp-for="IconUrl" placeholder="İkon Linkini Giriniz" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="header">İçerik Başlığı</label>
+                                <input type="text" class="form-control" id="header" asp-for="Header" placeholder="İçerik Başlığını Giriniz" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description">Açıklama</label>
+                                <input type="text" class="form-control" id="description" asp-for="Description" placeholder="Konu İçin Açıklama Giriniz" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Kullanılan Teknolojiler</label>
+                                <div class="row">
+                                    @foreach (var techIUsed in techsIUsed)
+                                    {
+                                        if (techIUsed.Key % 4 == 0 && techIUsed.Key != 0)
+                                        {
+                                            <div class="row"></div>
+                                        }
+
+                                        <div class="col-md-3">
+                                            <input type="checkbox" style="cursor:pointer;" name="ItemTeches" value="@techIUsed.Value" id="techIUsed_@techIUsed.Key" />
+                                            <label for="techIUsed_@techIUsed.Key" style="cursor:pointer;">@techIUsed.Value</label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Resume Kategori Elamanını Kaydet</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('resumeCategoryForm').addEventListener('submit', function (event) {
+        var selectedTechs = [];
+
+        document.querySelectorAll('input[name="ItemTeches"]:checked').forEach(function (checkbox) {
+            var techId = checkbox.id.replace('techIUsed_', '');
+            var techName = checkbox.value;
+
+            selectedTechs.push({
+                ItemTechName: techName,
+                TechIUsedId: parseInt(techId)
+            });
+        });
+
+        document.getElementById('itemTechesJson').value = JSON.stringify(selectedTechs);
+    });
+</script>

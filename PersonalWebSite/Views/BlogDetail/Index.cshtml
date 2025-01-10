@@ -1,0 +1,54 @@
+﻿@model ResultBlogDto
+
+@{
+    ViewData["Title"] = "Blog Detay";
+    Layout = "~/Views/UILayout/Index.cshtml";
+}
+
+<style>
+
+    .blog-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        min-height: 100vh;
+        padding: 20px;
+        background-color: #f5f5f5;
+        box-sizing: border-box;
+    }
+
+    .blog-title {
+        text-align: center;
+        font-size: 5rem;
+        font-weight: bold;
+        margin-top: 40px;
+        margin-bottom: 40px;
+    }
+
+    .blog-meta {
+        text-align: right;
+        font-size: 1.4rem;
+        color: #7a7a7a;
+        margin-bottom: 40px;
+        width: 60%;
+    }
+
+    .blog-content {
+        font-size: 1.8rem;
+        line-height: 2;
+        text-align: justify;
+        width: 60%;
+    }
+</style>
+
+<div class="blog-container">
+    <div class="blog-title">@Model.Title</div>
+    <div class="blog-meta">
+        Emin Erol &bull; @Model.CreatedDate.ToString("dd MMMM yyyy")
+    </div>
+    <div class="blog-content">
+        @Html.Raw(Model.Content)
+    </div>
+</div>

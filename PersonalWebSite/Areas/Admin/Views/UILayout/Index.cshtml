@@ -1,0 +1,29 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+@await Html.PartialAsync("/Areas/Admin/Views/UILayout/HeaderPartial.cshtml")
+
+<body>
+    <div id="layout-wrapper">
+
+        @await Html.PartialAsync("/Areas/Admin/Views/UILayout/NavbarPartial.cshtml")
+
+        @await Html.PartialAsync("/Areas/Admin/Views/UILayout/SideBarPartial.cshtml")
+
+        <div class="main-content">
+
+            @RenderBody()
+
+            @await Html.PartialAsync("/Areas/Admin/Views/UILayout/FooterPartial.cshtml")
+
+        </div>
+    </div>
+
+    @await Html.PartialAsync("/Areas/Admin/Views/UILayout/ScriptPartial.cshtml")
+
+</body>
+</html>

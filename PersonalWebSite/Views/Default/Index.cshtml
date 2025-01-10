@@ -1,0 +1,22 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/UILayout/Index.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<body>
+
+    @await Component.InvokeAsync("_MainContentComponentPartial")
+
+    @await Component.InvokeAsync("_AboutMeComponentPartial")
+
+    @await Component.InvokeAsync("_ResumeComponentPartial")
+
+    @await Component.InvokeAsync("_BlogsComponentPartial")
+
+    @await Component.InvokeAsync("_ContactComponentPartial")
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+﻿@model List<ResultContactMailDto>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/UILayout/Index.cshtml";
+    int count = 0;
+
+    string ShortenMessage(string message)
+    {
+        if (string.IsNullOrEmpty(message)) return "";
+
+        int dotIndex = message.IndexOf('.');
+        string shortenedMessage = dotIndex > -1 ? message.Substring(0, dotIndex + 1) : message;
+
+        if (shortenedMessage.Length > 100)
+        {
+            shortenedMessage = shortenedMessage.Substring(0, 100);
+        }
+
+        if (shortenedMessage.Length < message.Length)
+        {
+            shortenedMessage += "...";
+        }
+
+        return shortenedMessage;
+    }
+}
+
+<style>
+    .clickable-row {
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+    }
+
+        .clickable-row:hover {
+            background-color: #f0f0f0;
+        }
+
+    .unread-mail td {
+        font-weight: bold;
+    }
+</style>
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Ana Sayfa Banner Alanı</h4>
+                        <p class="card-subtitle mb-4">
+                            Kullanıcılar tarafından gönderilen mail ve ilgili bilgileri inceleyebilirsiniz.
+                        </p>
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Ad Soyad</th>
+                                        <th>Eposta</th>
+                                        <th>Konu</th>
+                                        <th>Mesaj</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        count++;
+                                        var isUnreadClass = item.IsRead == false ? "unread-mail" : "";
+                                        <tr class="clickable-row @isUnreadClass" data-toggle="modal" data-target="#mailModal"
+                                            data-id="@item.ContactMailId" data-name="@item.Name" data-email="@item.Email"
+                                            data-subject="@item.Subject" data-message="@item.Message"
+                                            onclick="showMailDetails(this)">
+                                            <td>@count</td>
+                                            <td>@item.Name</td>
+                                            <td>@item.Email</td>
+                                            <td>@item.Subject</td>
+                                            <td>@ShortenMessage(item.Message!)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mailModal" tabindex="-1" role="dialog" aria-labelledby="mailModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mailModalLabel">Mail Detayları</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Ad Soyad:</strong> <span id="modalName"></span></p>
+                <p><strong>Eposta:</strong> <span id="modalEmail"></span></p>
+                <p><strong>Konu:</strong> <span id="modalSubject"></span></p>
+                <p><strong>Mesaj:</strong></p>
+                <p id="modalMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showMailDetails(element) {
+        var mailId = $(element).data('id');
+        var mailName = $(element).data('name');
+        var mailEmail = $(element).data('email');
+        var mailSubject = $(element).data('subject');
+        var mailMessage = $(element).data('message');
+        var isRead = $(element).hasClass('unread-mail');
+
+        $('#modalName').text(mailName);
+        $('#modalEmail').text(mailEmail);
+        $('#modalSubject').text(mailSubject);
+        $('#modalMessage').text(mailMessage);
+
+        if (isRead) {
+            markMailAsRead(mailId, element);
+        }
+    }
+
+    function markMailAsRead(mailId, element) {
+        $.ajax({
+            url: '/Admin/ContactMail/MarkMailAsRead/' + mailId,
+            type: 'POST',
+            success: function (response) {
+                $(element).removeClass('unread-mail');
+            },
+            error: function (error) {
+                console.error('Mail işaretlenemedi:', error);
+            }
+        });
+    }
+</script>

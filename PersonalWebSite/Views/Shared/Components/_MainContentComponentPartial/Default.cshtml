@@ -1,0 +1,36 @@
+﻿@model List<BannerWithSocialMediaDto>
+
+@foreach(var banner in Model)
+{
+    <section id="intro">
+
+        <div class="intro-overlay"></div>
+
+        <div class="intro-content">
+            <div class="row">
+
+                <div class="col-twelve">
+
+                    <h5>@banner.StartMessage</h5>
+                    <h1>@banner.MeetMessage</h1>
+
+                    <p class="intro-position">
+                        <span>@banner.Title</span>
+                    </p>
+
+                    <a class="button stroke smoothscroll" href="#about" title="">More About Me</a>
+
+                </div>
+
+            </div>
+        </div>
+
+        <ul class="intro-social">
+            @foreach(var socialMedia in Model[0].SocialMedias)
+            {
+                <li><a href="@socialMedia.SocialMediaUrl" target="_blank"><i class="fa fa-brands fa-@socialMedia.IconUrl"></i></a></li>
+            }
+        </ul>
+
+    </section>
+}

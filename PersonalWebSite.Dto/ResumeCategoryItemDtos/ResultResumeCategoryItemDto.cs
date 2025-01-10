@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PersonalWebSite.Dto.ResumeCategoryItemDtos
+{
+    public class ResultResumeCategoryItemDto
+    {
+        public int ResumeCategoryItemId { get; set; }
+        public string? Title { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string? IconUrl { get; set; }
+        public string? Header { get; set; }
+        public string? Description { get; set; }
+        public List<string> TechNames { get; set; }
+    }
+}

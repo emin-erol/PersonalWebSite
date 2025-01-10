@@ -1,0 +1,70 @@
+﻿@model List<ResultResumeCategoryItemsWithTechIUsedDto>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/UILayout/Index.cshtml";
+    int count = 0;
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Ana Sayfa Resume Kategori Elemanları Alanı</h4>
+                        <p class="card-subtitle mb-4">
+                            Anasayfanın Resume alanı altında bulunan Resume Kategorilerine ait elemanların yönetildiği bu sayfada yönetim işlemlerini gerçekleştirebilirsiniz.
+                        </p>
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Konu Başlığı</th>
+                                        <th>Başlangıç Tarihi</th>
+                                        <th>Bitiş Tarihi</th>
+                                        <th>Ikon Linki</th>
+                                        <th>İçerik Başlığı</th>
+                                        <th>Açıklama</th>
+                                        <th>Kullanılan Teknolojiler</th>
+                                        <th>Sil</th>
+                                        <th>Güncelle</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        count++;
+                                        <tr>
+                                            <td>@count</td>
+                                            <td>@item.Title</td>
+                                            <td>@item.StartDate</td>
+                                            <td>@item.EndDate</td>
+                                            <td>@item.IconUrl</td>
+                                            <td>@item.Header</td>
+                                            <td>@item.Description</td>
+                                            <td>
+                                                <ul>
+                                                    @foreach (var tech in item.TechNames)
+                                                    {
+                                                        <li>@tech</li>
+                                                    }
+                                                </ul>
+                                            </td>
+                                            <td><a href="/Admin/ResumeCategoryItem/RemoveResumeCategoryItem/@item.ResumeCategoryItemId" class="btn btn-outline-danger">Sil</a></td>
+                                            <td><a href="/Admin/ResumeCategoryItem/UpdateResumeCategoryItemModal/@item.ResumeCategoryItemId" class="btn btn-outline-success">Güncelle</a></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                            <a href="/Admin/ResumeCategoryItem/CreateResumeCategoryItemModal" class="m-3 btn btn-outline-primary">Yeni Resume Kategori Elemanı Ekle</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

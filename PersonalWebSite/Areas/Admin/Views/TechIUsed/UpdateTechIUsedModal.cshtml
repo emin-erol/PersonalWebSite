@@ -1,0 +1,33 @@
+﻿@model UpdateTechIUsedDto
+
+@{
+    ViewData["Title"] = "UpdateTechIUsedModal";
+    Layout = "~/Areas/Admin/Views/UILayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Banner Bilgilerini Güncelleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Bu alanda Teknolojiler alanınızdaki veriler hakkında güncelleme yapabilirsiniz.
+                        </p>
+                        <form method="post">
+                            <input type="hidden" asp-for="TechIUsedId" />
+
+                            <div class="form-group">
+                                <label for="name">Teknoloji Adı</label>
+                                <input type="text" class="form-control" id="name" asp-for="Name" placeholder="Teknoloji Adını Giriniz" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Teknolojiyi Güncelle</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

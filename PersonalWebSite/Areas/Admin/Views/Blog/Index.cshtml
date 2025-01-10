@@ -1,0 +1,66 @@
+﻿@model List<ResultBlogDto>
+
+@using System.Text.RegularExpressions
+@using System.Web
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/UILayout/Index.cshtml";
+
+    int count = 0;
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Bloglar</h4>
+                        <p class="card-subtitle mb-4">
+                            Blogların yönetildiği panel.
+                        </p>
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Blog Adı</th>
+                                        <th>Blog İçeriği</th>
+                                        <th>Oluşturulma Tarihi</th>
+                                        <th>Kapak Fotoğrafı URL</th>
+                                        <th>Sil</th>
+                                        <th>Güncelle</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        count++;
+                                        <tr>
+                                            <td>@count</td>
+                                            <td>@item.Title</td>
+                                            <td>
+                                                @{
+                                                    var decodedContent = HttpUtility.HtmlDecode(item.Content); // HTML özel karakterlerini düz metne çevir
+                                                    var plainTextContent = Regex.Replace(decodedContent, "<.*?>", String.Empty); // HTML etiketlerini kaldır
+                                                    plainTextContent = Regex.Replace(plainTextContent, @"\s+", " "); // Birden fazla boşluğu tek bir boşlukla değiştirir
+                                                    var shortContent = plainTextContent.Length > 100 ? plainTextContent.Substring(0, 100) : plainTextContent;
+                                                }
+                                                @shortContent...
+                                            </td>
+                                            <td>@item.CreatedDate.ToString("dd.MM.yyyy")</td>
+                                            <td>@item.CoverImageUrl</td>
+                                            <td><a href="/Admin/Blog/RemoveBlog/@item.BlogId" class="btn btn-outline-danger">Sil</a></td>
+                                            <td><a href="/Admin/Blog/UpdateBlogModal/@item.BlogId" class="btn btn-outline-success">Güncelle</a></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <a href="/Admin/Blog/CreateBlogModal" class="m-3 btn btn-outline-primary">Yeni Blog Ekle</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

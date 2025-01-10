@@ -1,0 +1,50 @@
+﻿@model CreateBlogDto
+
+@{
+    ViewData["Title"] = "CreateBlogModal";
+    Layout = "~/Areas/Admin/Views/UILayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Yeni Blog Girişi</h4>
+                        <p class="card-subtitle mb-4">
+                            Lütfen blog başlığını, içeriğini ve diğer özellikleri belirleyiniz.
+                        </p>
+                        <form method="post" asp-action="CreateBlog" asp-controller="Blog">
+
+                            <input type="hidden" value="@DateTime.UtcNow" asp-for="CreatedDate" />
+
+                            <div class="mb-3">
+                                <label for="coverImageUrl" class="form-label">Kapak Fotoğrafı URL</label>
+                                <input type="text" class="form-control" asp-for="CoverImageUrl" id="coverImageUrl" placeholder="Linki giriniz..." required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="Title" class="form-label">Blog Başlığı</label>
+                                <input type="text" class="form-control" asp-for="Title" id="Title" placeholder="Başlık giriniz..." required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="Content" class="form-label">Blog İçeriği</label>
+                                <textarea class="form-control" id="Content" asp-for="Content" name="Content" placeholder="Blog içeriğini buraya yazınız..." rows="10"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Blog'u Kaydet</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+
+<script>
+    CKEDITOR.replace('Content');
+</script>

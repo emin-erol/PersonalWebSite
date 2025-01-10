@@ -1,0 +1,63 @@
+﻿@model List<ResultResumeCategoryDto>
+
+<section id="resume" class="grey-section">
+
+	<div class="row section-intro">
+		<div class="col-twelve">
+
+			<h5>Resume</h5>
+			<h1>More of my credentials.</h1>
+
+		</div>
+	</div>
+
+	@foreach (var resumeCategory in Model)
+	{
+		<div class="row resume-timeline">
+
+			<div class="col-twelve resume-header">
+
+				<h2>@resumeCategory.CategoryName</h2>
+
+			</div>
+
+			@foreach (var resumeCategoryItem in resumeCategory.ResumeCategoryItems)
+			{
+				<div class="col-twelve">
+
+					<div class="timeline-wrap">
+
+						<div class="timeline-block">
+
+							<div class="timeline-ico">
+								<i class="@resumeCategoryItem.IconUrl"></i>
+							</div>
+
+							<div class="timeline-header">
+								<h3>@resumeCategoryItem.Title</h3>
+								<p>@resumeCategoryItem.StartDate.ToString("dd.MM.yyyy") - @resumeCategoryItem.EndDate.ToString("dd.MM.yyyy")</p>
+								<ul class="skill-bars">
+									@foreach (var itemTech in resumeCategoryItem.TechNames)
+									{
+										<li>
+											<strong>@itemTech</strong>
+										</li>
+									}
+								</ul>
+							</div>
+
+							<div class="timeline-content">
+								<h4>@resumeCategoryItem.Header</h4>
+								<p>@resumeCategoryItem.Description</p>
+							</div>
+
+						</div>
+
+					</div>
+
+				</div>
+			}
+		</div>
+	}
+
+</section>

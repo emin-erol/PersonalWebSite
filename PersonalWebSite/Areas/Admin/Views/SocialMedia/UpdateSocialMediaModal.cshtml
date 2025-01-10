@@ -1,0 +1,40 @@
+﻿@model UpdateSocialMediaDto
+
+@{
+    ViewData["Title"] = "UpdateSocialMediaModal";
+    Layout = "~/Areas/Admin/Views/UILayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Yeni Sosyal Medya Girişi</h4>
+                        <p class="card-subtitle mb-4">
+                            Düzenlemek istediğiniz yeni Sosyal Medya alanını lütfen doğru giriniz ve güncelle butonuna basınız.
+                        </p>
+                        <form method="post">
+
+                            <input type="hidden" asp-for="SocialMediaId" />
+
+                            <div class="form-group">
+                                <label for="socialMediaUrl">Sosyal Medya Linki</label>
+                                <input type="text" class="form-control" id="socialMediaUrl" asp-for="SocialMediaUrl" placeholder="Sosyal Medya Linkini Giriniz" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="iconUrl">İkon Linki</label>
+                                <input type="text" class="form-control" id="iconUrl" asp-for="IconUrl" placeholder="İkon Linkini Giriniz" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Sosyal Medya'yı Güncelle</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,99 @@
+﻿@model CreateAboutDto
+
+@{
+    ViewData["Title"] = "CreateAboutModal";
+    Layout = "~/Areas/Admin/Views/UILayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Yeni About Girişi</h4>
+                        <p class="card-subtitle mb-4">
+                            Eklemek istediğiniz yeni About alanını lütfen doğru giriniz ve kaydet butonuna basınız.
+                        </p>
+                        <form method="post" asp-action="CreateAbout" asp-controller="About" enctype="multipart/form-data">
+
+                            <div class="form-group">
+                                <label for="startMessage">Giriş Mesajı</label>
+                                <input type="text" class="form-control" id="startMessage" asp-for="StartMessage" placeholder="Giriş Mesajını Giriniz" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="profileMessage">Profil Mesajı</label>
+                                <input type="text" class="form-control" id="profileMessage" asp-for="ProfileMessage" placeholder="Profil Mesajını Giriniz" required>
+                            </div>
+
+                            <div>
+                                <label for="birthDate">Doğum Günü</label>
+                                <input type="date" class="form-control" id="birthDate" asp-for="BirthDate" placeholder="Doğum Gününü Giriniz" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="title">Unvan</label>
+                                <input type="text" class="form-control" id="title" asp-for="Title" placeholder="Unvanı Giriniz" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Eposta</label>
+                                <input type="email" class="form-control" id="email" asp-for="Email" placeholder="Eposta Adresinizi Giriniz" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cvFile">CV Dosyasını Yükle:</label>
+                                <input type="file" id="cvFile" name="cvFile" accept=".pdf" required />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="skills">Yetenekler</label>
+                                <div id="skills-container">
+
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" name="Skills[0].SkillName" placeholder="Yetenek Adını Giriniz" required>
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-secondary add-skill-btn">Bir tane daha ekle</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">About'u Kaydet</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        let skillIndex = 1; // Başlangıç index'i
+
+        // Yetenek ekleme butonuna tıklandığında çalışacak fonksiyon
+        $(document).on('click', '.add-skill-btn', function () {
+            // Yeni yetenek input alanı oluşturuluyor
+            const newSkillInput = `
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="Skills[${skillIndex}].SkillName" placeholder="Yetenek Adını Giriniz" required>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-danger remove-skill-btn">Kaldır</button>
+                    </div>
+                </div>
+            `;
+            $('#skills-container').append(newSkillInput);
+            skillIndex++; // Index'i artırıyoruz
+        });
+
+        // Yetenek kaldırma butonuna tıklandığında çalışacak fonksiyon
+        $(document).on('click', '.remove-skill-btn', function () {
+            $(this).closest('.input-group').remove();
+        });
+    });
+
+</script>

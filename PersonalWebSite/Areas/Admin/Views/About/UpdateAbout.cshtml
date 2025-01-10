@@ -1,0 +1,101 @@
+﻿@model UpdateAboutDto
+
+@{
+    ViewData["Title"] = "UpdateAboutModal";
+    Layout = "~/Areas/Admin/Views/UILayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">About Güncelle</h4>
+                        <p class="card-subtitle mb-4">
+                            Güncellemek istediğiniz About alanlarını lütfen doğru giriniz ve kaydet butonuna basınız.
+                        </p>
+                        <form method="post" enctype="multipart/form-data">
+                            <input type="hidden" asp-for="AboutId" />
+
+                            <div class="form-group">
+                                <label for="startMessage">Giriş Mesajı</label>
+                                <input type="text" class="form-control" id="startMessage" asp-for="StartMessage" placeholder="Giriş Mesajını Giriniz" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="profileMessage">Profil Mesajı</label>
+                                <input type="text" class="form-control" id="profileMessage" asp-for="ProfileMessage" placeholder="Profil Mesajını Giriniz" required>
+                            </div>
+
+                            <div>
+                                <label for="birthDate">Doğum Günü</label>
+                                <input type="date" class="form-control" id="birthDate" asp-for="BirthDate" placeholder="Doğum Gününü Giriniz" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="title">Unvan</label>
+                                <input type="text" class="form-control" id="title" asp-for="Title" placeholder="Unvanı Giriniz" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Eposta</label>
+                                <input type="email" class="form-control" id="email" asp-for="Email" placeholder="Eposta Adresinizi Giriniz" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cvFile">CV Dosyasını Yükle:</label>
+                                <input type="file" id="cvFile" name="cvFile" accept=".pdf" required />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="skills">Yetenekler</label>
+                                <div id="skills-container">
+                                    @for (int i = 0; i < Model.Skills.Count; i++)
+                                    {
+                                        <div class="input-group mb-3">
+                                            <input type="hidden" asp-for="@Model.Skills[i].AboutId" />
+                                            <input type="hidden" asp-for="@Model.Skills[i].SkillId" />
+                                            <input type="text" class="form-control" asp-for="@Model.Skills[i].SkillName" placeholder="Yetenek Adını Giriniz" required>
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-danger remove-skill-btn">Kaldır</button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                                <button type="button" class="btn btn-outline-secondary add-skill-btn">Bir tane daha ekle</button>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">About'u Güncelle</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        let skillIndex = @Model.Skills.Count;
+
+        $(document).on('click', '.add-skill-btn', function () {
+            const newSkillInput = `
+                    <div class="input-group mb-3">
+                        <input type="hidden" name="Skills[${skillIndex}].SkillId" value="0"/>
+                        <input type="text" class="form-control" name="Skills[${skillIndex}].SkillName" placeholder="Yetenek Adını Giriniz" required>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-danger remove-skill-btn">Kaldır</button>
+                        </div>
+                    </div>
+                `;
+            $('#skills-container').append(newSkillInput);
+            skillIndex++;
+        });
+
+        $(document).on('click', '.remove-skill-btn', function () {
+            $(this).closest('.input-group').remove();
+        });
+    });
+</script>

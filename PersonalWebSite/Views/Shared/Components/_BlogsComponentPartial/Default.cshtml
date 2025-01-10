@@ -1,0 +1,98 @@
+﻿@model List<ResultBlogDto>
+
+@using System.Text.RegularExpressions
+@using System.Web
+
+<style>
+	#blog {
+		background: #FFFFFF;
+		padding-top: 12rem;
+		padding-bottom: 15rem;
+	}
+
+	#blog .section-intro {
+		margin-bottom: 3rem;
+	}
+
+    .blog-card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 8px;
+        margin-bottom: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+    }
+
+    .blog-card-img {
+        height: 200px;
+        object-fit: cover;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        width: 100%;
+    }
+
+        .blog-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-card .card-body {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-align: center;
+        }
+
+        .blog-card .blog-read-btn {
+            margin-top: auto;
+            align-self: center;
+        }
+
+        .blog-card h5,
+        .blog-card p {
+            margin-left: 10px;
+            margin-right: 10px;
+            text-align: justify;
+        }
+</style>
+
+
+<section id="blog" class="grey-section">
+
+    <div class="row section-intro">
+        <div class="col-twelve">
+            <h5>Blogs</h5>
+            <h1>Exploring ideas through words.</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            @foreach (var blog in Model)
+            {
+                <div class="col-4 mb-4">
+                    <div class="card blog-card" 
+                         style="width: 33rem; cursor: pointer;" 
+                         onclick="window.location.href='/BlogDetail/Index/@blog.BlogId'">
+                        <img src="@blog.CoverImageUrl" class="card-img-top blog-card-img" style="border-radius: 5px" alt="@blog.Title">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">@blog.Title</h5>
+                            @{
+                                var decodedContent = HttpUtility.HtmlDecode(blog.Content);
+                                var plainTextContent = Regex.Replace(decodedContent, "<.*?>", String.Empty);
+                                plainTextContent = Regex.Replace(plainTextContent, @"\s+", " ");
+                                var shortContent = plainTextContent.Length > 100 ? plainTextContent.Substring(0, 100) : plainTextContent;
+                            }
+                            <p class="card-text">@shortContent...</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+</section>

@@ -1,0 +1,60 @@
+﻿@model List<BannerWithSocialMediaDto>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/UILayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Ana Sayfa Banner Alanı</h4>
+                        <p class="card-subtitle mb-4">
+                            Anasayfanın Banner alanında bulunan bilgileri aşağıdaki sayfadan düzenleyebilirsiniz.
+                        </p>
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Giriş Mesajı</th>
+                                        <th>Tanıtım Mesajı</th>
+                                        <th>Unvan</th>
+                                        <th>Sosyal Medya</th>
+                                        <th>Sil</th>
+                                        <th>Güncelle</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@item.StartMessage</td>
+                                            <td>@item.MeetMessage</td>
+                                            <td>@item.Title</td>
+                                            <td>
+                                                @foreach (var socialMedia in Model[0].SocialMedias)
+                                                {
+                                                    <a href="#" class="btn btn-sm">
+                                                        <i class="fa fa-brands fa-@socialMedia.IconUrl"></i>
+                                                    </a>
+                                                }
+                                            </td>
+                                            <td><a href="/Admin/Banner/RemoveBanner/@item.BannerId" class="btn btn-outline-danger">Sil</a></td>
+                                            <td><a href="/Admin/Banner/UpdateBannerModal/@item.BannerId" class="btn btn-outline-success">Güncelle</a></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            @if(Model.Count == 0){
+                                <a href="/Admin/Banner/CreateBannerModal" class="m-3 btn btn-outline-primary">Yeni Banner Ekle</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

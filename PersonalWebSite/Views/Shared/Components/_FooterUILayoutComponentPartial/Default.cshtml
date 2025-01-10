@@ -1,0 +1,28 @@
+﻿@model List<FooterWithSocialMediaDto>
+
+@foreach(var item in Model)
+{
+	<footer>
+		<div class="row">
+
+			<div class="col-six tab-full pull-right social">
+
+				<ul class="footer-social" style="margin-top: 20px;">
+					@foreach(var socialMedia in Model[0].SocialMedias)
+					{
+						<li><a href="@socialMedia.SocialMediaUrl" target="_blank"><i class="fa fa-brands fa-@socialMedia.IconUrl"></i></a></li>
+					}
+				</ul>
+
+			</div>
+
+			<div class="col-six tab-full" style="margin-top:20px;">
+				<div class="copyright">
+					<span>© Copyright @DateTime.Now.Year</span>
+					<span><strong>@item.Description</strong></span>
+				</div>
+			</div>
+
+		</div>
+	</footer>
+}

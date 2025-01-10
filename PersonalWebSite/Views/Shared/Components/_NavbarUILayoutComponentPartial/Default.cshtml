@@ -1,0 +1,57 @@
+﻿<style>
+	.navbar {
+		background-color: transparent;
+		color: #fff;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 15px 20px;
+		border: none;
+	}
+
+		.navbar .logo img {
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			object-fit: cover;
+			display: block;
+			vertical-align: middle;
+		}
+
+		.navbar ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			gap: 100px;
+			font-weight: bold;
+		}
+
+			.navbar ul li {
+				display: inline;
+			}
+
+				.navbar ul li a {
+					color: #fff;
+					text-decoration: none;
+					font-size: 20px;
+					transition: color 0.3s ease;
+				}
+
+					.navbar ul li a:hover {
+						color: #FF0077;
+					}
+</style>
+
+<nav class="navbar">
+    <div class="logo">
+        <img src="~/cv-site/images/profil.jpg" alt="User Photo">
+    </div>
+    <ul>
+        <li><a href="#home" class="smoothscroll">Home</a></li>
+        <li><a href="#about" class="smoothscroll">About</a></li>
+        <li><a href="#resume" class="smoothscroll">Resume</a></li>
+        <li><a href="#blog" class="smoothscroll">Blogs</a></li>
+        <li><a href="#contact" class="smoothscroll">Contact</a></li>
+    </ul>
+</nav>
