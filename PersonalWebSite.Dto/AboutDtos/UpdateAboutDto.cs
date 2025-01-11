@@ -16,6 +16,7 @@ namespace PersonalWebSite.Dto.AboutDtos
         public string? Title { get; set; }
         public string? Email { get; set; }
         public string? CvLink { get; set; }
+        public string? ProfileImageLink { get; set; }
         public List<UpdateSkillDto> Skills { get; set; }
     }
 }

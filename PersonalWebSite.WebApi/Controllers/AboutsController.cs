@@ -45,6 +45,14 @@ namespace PersonalWebSite.WebApi.Controllers
             return Ok(values);
         }
 
+        [HttpGet("GetProfileImageLink")]
+        public async Task<IActionResult> GetProfileImageLink()
+        {
+            var value = await _aboutDal.GetProfileImageLink();
+
+            return Ok(value);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateAbout(CreateAboutViewModel model)
         {
@@ -56,6 +64,7 @@ namespace PersonalWebSite.WebApi.Controllers
                 Email = model.Email,
                 CvLink = model.CvLink,
                 Title = model.Title,
+                ProfileImageLink = model.ProfileImageLink
             };
             await _aboutDal.CreateAsync(about);
 
@@ -84,7 +93,8 @@ namespace PersonalWebSite.WebApi.Controllers
                 Email = model.Email,
                 CvLink = model.CvLink,
                 ProfileMessage = model.ProfileMessage,
-                StartMessage = model.StartMessage
+                StartMessage = model.StartMessage,
+                ProfileImageLink = model.ProfileImageLink
             };
             await _aboutDal.UpdateAsync(about);
 

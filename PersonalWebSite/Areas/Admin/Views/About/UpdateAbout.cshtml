@@ -18,6 +18,9 @@
                         <form method="post" enctype="multipart/form-data">
                             <input type="hidden" asp-for="AboutId" />
 
+                            <input type="hidden" asp-for="CvLink" />
+                            <input type="hidden" asp-for="ProfileImageLink" />
+
                             <div class="form-group">
                                 <label for="startMessage">Giriş Mesajı</label>
                                 <input type="text" class="form-control" id="startMessage" asp-for="StartMessage" placeholder="Giriş Mesajını Giriniz" required>
@@ -45,7 +48,26 @@
 
                             <div class="form-group">
                                 <label for="cvFile">CV Dosyasını Yükle:</label>
-                                <input type="file" id="cvFile" name="cvFile" accept=".pdf" required />
+                                @if (!string.IsNullOrEmpty(Model.CvLink))
+                                {
+                                    <div id="cv-info">
+                                        <p>Mevcut CV: <a href="@Model.CvLink" target="_blank">@System.IO.Path.GetFileName(Model.CvLink)</a></p>
+                                        <button type="button" class="btn btn-outline-secondary" id="change-cv-btn">Değiştir</button>
+                                    </div>
+                                }
+                                <input type="file" id="cvFile" name="cvFile" accept=".pdf" style="display: @(!string.IsNullOrEmpty(Model.CvLink) ? "none" : "block")" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ppFile">Profil Fotoğrafını Yükle:</label>
+                                @if (!string.IsNullOrEmpty(Model.ProfileImageLink))
+                                {
+                                    <div id="pp-info">
+                                        <p>Mevcut Profil Fotoğrafı: <a href="@Model.ProfileImageLink" target="_blank">@System.IO.Path.GetFileName(Model.ProfileImageLink)</a></p>
+                                        <button type="button" class="btn btn-outline-secondary" id="change-pp-btn">Değiştir</button>
+                                    </div>
+                                }
+                                <input type="file" id="ppFile" name="ppFile" accept=".jpeg, .jpg, .png" style="display: @(!string.IsNullOrEmpty(Model.ProfileImageLink) ? "none" : "block")" />
                             </div>
 
                             <div class="form-group">
@@ -96,6 +118,24 @@
 
         $(document).on('click', '.remove-skill-btn', function () {
             $(this).closest('.input-group').remove();
+        });
+
+        $('#change-cv-btn').on('click', function () {
+            $('#cvFile').trigger('click');
+        });
+
+        $('#change-pp-btn').on('click', function () {
+            $('#ppFile').trigger('click');
+        });
+
+        $('#cvFile').on('change', function () {
+            $('#cv-info').hide();
+            $(this).show();
+        });
+
+        $('#ppFile').on('change', function () {
+            $('#pp-info').hide();
+            $(this).show();
         });
     });
 </script>

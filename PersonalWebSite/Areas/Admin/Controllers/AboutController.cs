@@ -9,7 +9,6 @@ namespace PersonalWebSite.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/About")]
-    [Authorize]
     public class AboutController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -36,6 +35,24 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [Route("GetProfileImageLink")]
+        public async Task<string> GetProfileImageLink()
+        {
+            var client = _httpClientFactory.CreateClient();
+
+            var response = await client.GetAsync("https://localhost:7007/api/Abouts/GetProfileImageLink");
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonData = await response.Content.ReadAsStringAsync();
+
+                return jsonData!;
+            }
+
+            return String.Empty;
+        }
+
+        [HttpGet]
+        [Authorize]
         [Route("CreateAboutModal")]
         public IActionResult CreateAboutModal()
         {
@@ -43,10 +60,11 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("CreateAboutModal")]
-        public async Task<IActionResult> CreateAbout(CreateAboutDto dto, IFormFile cvFile)
+        public async Task<IActionResult> CreateAbout(CreateAboutDto dto, IFormFile cvFile, IFormFile ppFile)
         {
-            if (cvFile != null && cvFile.Length > 0)
+            if (cvFile != null && cvFile.Length > 0 && ppFile != null && ppFile.Length > 0)
             {
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
                 if (!Directory.Exists(uploadsFolder))
@@ -54,15 +72,25 @@ namespace PersonalWebSite.Areas.Admin.Controllers
                     Directory.CreateDirectory(uploadsFolder);
                 }
 
-                var fileName = Path.GetFileName(cvFile.FileName);
-                var filePath = Path.Combine(uploadsFolder, fileName);
+                var cvFileName = Path.GetFileName(cvFile.FileName);
+                var cvFilePath = Path.Combine(uploadsFolder, cvFileName);
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                using (var stream = new FileStream(cvFilePath, FileMode.Create))
                 {
                     await cvFile.CopyToAsync(stream);
                 }
 
-                dto.CvLink = Url.Content($"~/uploads/{fileName}");
+                dto.CvLink = Url.Content($"~/uploads/{cvFileName}");
+
+                var ppFileName = Path.GetFileName(ppFile.FileName);
+                var ppFilePath = Path.Combine(uploadsFolder, ppFileName);
+
+                using (var stream = new FileStream(ppFilePath, FileMode.Create))
+                {
+                    await ppFile.CopyToAsync(stream);
+                }
+
+                dto.ProfileImageLink = Url.Content($"~/uploads/{ppFileName}");
             }
 
             var client = _httpClientFactory.CreateClient();
@@ -80,6 +108,7 @@ namespace PersonalWebSite.Areas.Admin.Controllers
 
 
         [HttpGet]
+        [Authorize]
         [Route("UpdateAbout/{id}")]
         public async Task<IActionResult> UpdateAbout(int id)
         {
@@ -97,36 +126,40 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("UpdateAbout/{id}")]
-        public async Task<IActionResult> UpdateAbout(UpdateAboutDto dto, IFormFile cvFile)
+        public async Task<IActionResult> UpdateAbout(UpdateAboutDto dto, IFormFile cvFile, IFormFile ppFile)
         {
-            // Yeni CV dosyası varsa, işlemi gerçekleştirelim
-            if (cvFile != null && cvFile.Length > 0)
+            if (cvFile != null)
             {
-                // Dosyanın yükleneceği klasör
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
 
-                // Klasör yoksa oluşturuluyor
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
+                var cvFileName = Path.GetFileName(cvFile.FileName);
+                var cvFilePath = Path.Combine(uploadsFolder, cvFileName);
 
-                // Yeni dosya adı
-                var fileName = Path.GetFileName(cvFile.FileName);
-                var filePath = Path.Combine(uploadsFolder, fileName);
-
-                // Yeni dosyayı yükleme
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                using (var stream = new FileStream(cvFilePath, FileMode.Create))
                 {
                     await cvFile.CopyToAsync(stream);
                 }
 
-                // CvLink'i yeni dosya yolu ile güncelle
-                dto.CvLink = Url.Content($"~/uploads/{fileName}");
+                dto.CvLink = Url.Content($"~/uploads/{cvFileName}");
             }
 
-            // Yetenekler güncelleniyor
+            if(ppFile != null)
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+
+                var ppFileName = Path.GetFileName(ppFile.FileName);
+                var ppFilePath = Path.Combine(uploadsFolder, ppFileName);
+
+                using (var stream = new FileStream(ppFilePath, FileMode.Create))
+                {
+                    await ppFile.CopyToAsync(stream);
+                }
+
+                dto.ProfileImageLink = Url.Content($"~/uploads/{ppFileName}");
+            }
+
             var client = _httpClientFactory.CreateClient();
 
             var existingSkills = await client.GetAsync("https://localhost:7007/api/Skills");
@@ -149,7 +182,6 @@ namespace PersonalWebSite.Areas.Admin.Controllers
                 }
             }
 
-            // Güncellenmiş bilgiyi API'ye gönderiyoruz
             var jsonData = JsonConvert.SerializeObject(dto);
             StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
             var response = await client.PutAsync("https://localhost:7007/api/Abouts", content);
@@ -163,6 +195,7 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         }
 
         [Route("RemoveAbout/{id}")]
+        [Authorize]
         public async Task<IActionResult> RemoveAbout(int id)
         {
             var client = _httpClientFactory.CreateClient();

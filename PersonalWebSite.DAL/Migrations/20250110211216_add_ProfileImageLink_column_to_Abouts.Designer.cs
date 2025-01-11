@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PersonalWebSite.DAL.Core;
 
@@ -11,9 +12,11 @@ using PersonalWebSite.DAL.Core;
 namespace PersonalWebSite.DAL.Migrations
 {
     [DbContext(typeof(PersonalWebSiteDbContext))]
-    partial class PersonalWebSiteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250110211216_add_ProfileImageLink_column_to_Abouts")]
+    partial class add_ProfileImageLink_column_to_Abouts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -44,14 +44,34 @@
 </style>
 
 <nav class="navbar">
-    <div class="logo">
-        <img src="~/cv-site/images/profil.jpg" alt="User Photo">
-    </div>
-    <ul>
-        <li><a href="#home" class="smoothscroll">Home</a></li>
-        <li><a href="#about" class="smoothscroll">About</a></li>
-        <li><a href="#resume" class="smoothscroll">Resume</a></li>
-        <li><a href="#blog" class="smoothscroll">Blogs</a></li>
-        <li><a href="#contact" class="smoothscroll">Contact</a></li>
-    </ul>
+	<div class="logo">
+		<img id="profileImage" src="/uploads/default_profile_image.jpg" alt="User Photo">
+	</div>
+	<ul>
+		<li><a href="#home" class="smoothscroll">Home</a></li>
+		<li><a href="#about" class="smoothscroll">About</a></li>
+		<li><a href="#resume" class="smoothscroll">Resume</a></li>
+		<li><a href="#blog" class="smoothscroll">Blogs</a></li>
+		<li><a href="#contact" class="smoothscroll">Contact</a></li>
+	</ul>
 </nav>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	$(document).ready(function () {
+		$.ajax({
+			url: '/Admin/About/GetProfileImageLink',
+			type: 'GET',
+			success: function (data) {
+				if (data) {
+					$('#profileImage').attr('src', data);
+				} else {
+					$('#profileImage').attr('src', '/uploads/default_profile_image.jpg');
+				}
+			},
+			error: function () {
+				$('#profileImage').attr('src', '/uploads/default_profile_image.jpg');
+			}
+		});
+	});
+</script>

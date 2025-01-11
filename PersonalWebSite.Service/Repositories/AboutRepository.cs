@@ -58,6 +58,7 @@ namespace PersonalWebSite.Service.Repositories
                     Title = x.Title,
                     Email = x.Email,
                     CvLink = x.CvLink,
+                    ProfileImageLink = x.ProfileImageLink,
                     Skills = x.Skills.Select(s => new SkillViewModel
                     {
                         SkillId = s.SkillId,
@@ -83,6 +84,7 @@ namespace PersonalWebSite.Service.Repositories
                     Title = x.Title,
                     Email = x.Email,
                     CvLink = x.CvLink,
+                    ProfileImageLink = x.ProfileImageLink,
                     Skills = x.Skills.Select(s => new SkillViewModel
                     {
                         SkillId = s.SkillId,
@@ -92,6 +94,13 @@ namespace PersonalWebSite.Service.Repositories
                 }).FirstOrDefaultAsync();
 
             return result;
+        }
+
+        public async Task<string> GetProfileImageLink()
+        {
+            var about = await _context.Abouts.OrderBy(a => a.AboutId).FirstOrDefaultAsync();
+
+            return about!.ProfileImageLink ?? string.Empty;
         }
     }
 }

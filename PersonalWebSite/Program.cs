@@ -9,8 +9,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.HttpOnly = true;
         options.Cookie.IsEssential = true;
 
-        options.Cookie.MaxAge = TimeSpan.FromMinutes(1);
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+        options.Cookie.MaxAge = TimeSpan.FromHours(1);
+        options.ExpireTimeSpan = TimeSpan.FromHours(1);
         options.SlidingExpiration = true;
 
         options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;

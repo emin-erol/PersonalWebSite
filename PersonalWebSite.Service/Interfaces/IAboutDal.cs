@@ -12,5 +12,6 @@ namespace PersonalWebSite.Service.Interfaces
     {
         Task<List<GetAboutWithSkillViewModel>> GetAboutWithSkill();
         Task<GetAboutWithSkillViewModel> GetAboutWithSkillByAboutId(int id);
+        Task<string> GetProfileImageLink();
     }
 }
