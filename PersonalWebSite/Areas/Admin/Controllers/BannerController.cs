@@ -57,19 +57,6 @@ namespace PersonalWebSite.Areas.Admin.Controllers
             return View("CreateBannerModal", dto);
         }
 
-        [Route("RemoveBanner/{id}")]
-        public async Task<IActionResult> RemoveBanner(int id)
-        {
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.DeleteAsync("https://localhost:7007/api/Banners?id=" + id);
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction("Index", "Banner");
-            }
-
-            return View();
-        }
-
         [HttpGet]
         [Route("UpdateBannerModal/{id}")]
         public async Task<IActionResult> UpdateBannerModal(int id)

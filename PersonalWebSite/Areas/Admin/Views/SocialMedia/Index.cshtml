@@ -12,7 +12,7 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Ana Sayfa Banner Alanı</h4>
+                        <h4 class="card-title">Sosyal Medya Bilgileri</h4>
                         <p class="card-subtitle mb-4">
                             Sosyal Medya linklerinin yönetildiği panel.
                         </p>
@@ -21,6 +21,7 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
+                                        <th>Sosyal Medya Adı</th>
                                         <th>Sosyal Medya Linki</th>
                                         <th>İkon Linki</th>
                                         <th>Sil</th>
@@ -33,9 +34,12 @@
                                         count++;
                                         <tr>
                                             <td>@count</td>
+                                            <td>@item.Name</td>
                                             <td>@item.SocialMediaUrl</td>
                                             <td>@item.IconUrl</td>
-                                            <td><a href="/Admin/SocialMedia/RemoveSocialMedia/@item.SocialMediaId" class="btn btn-outline-danger">Sil</a></td>
+                                            <td>
+                                                <button class="btn btn-outline-danger" onclick="confirmDelete('@item.SocialMediaId')">Sil</button>
+                                            </td>
                                             <td><a href="/Admin/SocialMedia/UpdateSocialMediaModal/@item.SocialMediaId" class="btn btn-outline-success">Güncelle</a></td>
                                         </tr>
                                     }
@@ -49,3 +53,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    function confirmDelete(itemId) {
+        Swal.fire({
+            title: 'Kaydı silmek istediğinize emin misiniz?',
+            text: "Bu işlem geri alınamaz!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/Admin/SocialMedia/RemoveSocialMedia/${itemId}`;
+            }
+        });
+    }
+</script>

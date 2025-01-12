@@ -8,6 +8,7 @@ namespace PersonalWebSite.Dto.SocialMediaDtos
 {
     public class CreateSocialMediaDto
     {
+        public string Name { get; set; }
         public string IconUrl { get; set; }
         public string SocialMediaUrl { get; set; }
     }

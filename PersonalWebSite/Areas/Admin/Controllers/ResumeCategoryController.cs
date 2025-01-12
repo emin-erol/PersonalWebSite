@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PersonalWebSite.Dto.ResumeCategoryDtos;
+using PersonalWebSite.Dto.ResumeCategoryItemDtos;
 using PersonalWebSite.Dto.TechIUsedDtos;
 using System.Text;
 
@@ -96,6 +97,22 @@ namespace PersonalWebSite.Areas.Admin.Controllers
 		public async Task<IActionResult> RemoveResumeCategory(int id)
 		{
 			var client = _httpClientFactory.CreateClient();
+
+			var rciResponse = await client.GetAsync("https://localhost:7007/api/ResumeCategoryItems/GetResumeCategoryItemsByResumeCategoryId/" + id);
+
+			if (rciResponse.IsSuccessStatusCode)
+			{
+				var jsonData = await rciResponse.Content.ReadAsStringAsync();
+				var rciValues = JsonConvert.DeserializeObject<List<ResultResumeCategoryItemDto>>(jsonData);
+
+				if (rciValues != null)
+				{
+                    TempData["ErrorMessage"] = "error";
+
+                    return RedirectToAction("Index", "ResumeCategory");
+                }
+			}
+
 			var response = await client.DeleteAsync("https://localhost:7007/api/ResumeCategories?id=" + id);
 			if (response.IsSuccessStatusCode)
 			{

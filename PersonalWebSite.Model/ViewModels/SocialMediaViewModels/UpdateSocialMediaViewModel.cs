@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PersonalWebSite.Dto.SocialMediaDtos
+namespace PersonalWebSite.Model.ViewModels.SocialMediaViewModels
 {
-    public class UpdateSocialMediaDto
+    public class UpdateSocialMediaViewModel
     {
         public int SocialMediaId { get; set; }
         public string Name { get; set; }
-        public string IconUrl { get; set; }
-        public string SocialMediaUrl { get; set; }
+        public string? IconUrl { get; set; }
+        public string? SocialMediaUrl { get; set; }
     }
 }

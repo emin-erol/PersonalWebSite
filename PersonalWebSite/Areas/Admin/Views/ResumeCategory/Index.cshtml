@@ -1,4 +1,6 @@
-﻿@model List<ResultResumeCategoryDto>
+﻿@using System.Web
+
+@model List<ResultResumeCategoryDto>
 
 @{
     ViewData["Title"] = "Index";
@@ -12,9 +14,9 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Ana Sayfa Banner Alanı</h4>
+                        <h4 class="card-title">Resume Kategorileri</h4>
                         <p class="card-subtitle mb-4">
-                            Anasayfanın Banner alanında bulunan bilgileri aşağıdaki sayfadan düzenleyebilirsiniz.
+                            Anasayfanın Resume alanında bulunan kategorileri aşağıdaki sayfadan düzenleyebilirsiniz.
                         </p>
                         <div class="table-responsive">
                             <table class="table mb-0">
@@ -33,7 +35,9 @@
                                         <tr>
                                             <td>@count</td>
                                             <td>@item.CategoryName</td>
-                                            <td><a href="/Admin/ResumeCategory/RemoveResumeCategory/@item.ResumeCategoryId" class="btn btn-outline-danger">Sil</a></td>
+                                            <td>
+                                                <button class="btn btn-outline-danger" onclick="confirmDelete('@item.ResumeCategoryId')">Sil</button>
+                                            </td>
                                             <td><a href="/Admin/ResumeCategory/UpdateResumeCategoryModal/@item.ResumeCategoryId" class="btn btn-outline-success">Güncelle</a></td>
                                         </tr>
                                     }
@@ -49,3 +53,34 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.8/dist/sweetalert2.all.min.js"></script>
+<script>
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <text>
+                Swal.fire({
+                        icon: 'warning',
+                        title: 'Warning',
+                        text: 'Kategoriye bağlı kayıtlar olduğu için kategoriyi silemezsiniz.'
+                    });
+        </text>
+    }
+
+    function confirmDelete(itemId) {
+        Swal.fire({
+            title: 'Kategoriyi silmek istediğinize emin misiniz?',
+            text: "Bu işlem geri alınamaz!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/Admin/ResumeCategory/RemoveResumeCategory/${itemId}`;
+            }
+        });
+    }
+</script>

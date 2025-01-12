@@ -11,13 +11,18 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Yeni Sosyal Medya Girişi</h4>
+                        <h4 class="card-title">Sosyal Medya Düzenleme</h4>
                         <p class="card-subtitle mb-4">
                             Düzenlemek istediğiniz yeni Sosyal Medya alanını lütfen doğru giriniz ve güncelle butonuna basınız.
                         </p>
                         <form method="post">
 
                             <input type="hidden" asp-for="SocialMediaId" />
+
+                            <div class="form-group">
+                                <label for="name">Sosyal Medya Adı</label>
+                                <input type="text" class="form-control" id="name" asp-for="Name" placeholder="Sosyal Medya Adını Giriniz" required>
+                            </div>
 
                             <div class="form-group">
                                 <label for="socialMediaUrl">Sosyal Medya Linki</label>

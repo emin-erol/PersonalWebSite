@@ -18,6 +18,11 @@
                         <form method="post" asp-action="CreateSocialMedia" asp-controller="SocialMedia">
 
                             <div class="form-group">
+                                <label for="name">Sosyal Medya Adı</label>
+                                <input type="text" class="form-control" id="name" asp-for="Name" placeholder="Sosyal Medya Adını Giriniz" required>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="socialMediaUrl">Sosyal Medya Linki</label>
                                 <input type="text" class="form-control" id="socialMediaUrl" asp-for="SocialMediaUrl" placeholder="Sosyal Medya Linkini Giriniz" required>
                             </div>

@@ -41,16 +41,18 @@
                                             <td>@item.Title</td>
                                             <td>
                                                 @{
-                                                    var decodedContent = HttpUtility.HtmlDecode(item.Content); // HTML özel karakterlerini düz metne çevir
-                                                    var plainTextContent = Regex.Replace(decodedContent, "<.*?>", String.Empty); // HTML etiketlerini kaldır
-                                                    plainTextContent = Regex.Replace(plainTextContent, @"\s+", " "); // Birden fazla boşluğu tek bir boşlukla değiştirir
+                                                    var decodedContent = HttpUtility.HtmlDecode(item.Content);
+                                                    var plainTextContent = Regex.Replace(decodedContent, "<.*?>", String.Empty);
+                                                    plainTextContent = Regex.Replace(plainTextContent, @"\s+", " ");
                                                     var shortContent = plainTextContent.Length > 100 ? plainTextContent.Substring(0, 100) : plainTextContent;
                                                 }
                                                 @shortContent...
                                             </td>
                                             <td>@item.CreatedDate.ToString("dd.MM.yyyy")</td>
                                             <td>@item.CoverImageUrl</td>
-                                            <td><a href="/Admin/Blog/RemoveBlog/@item.BlogId" class="btn btn-outline-danger">Sil</a></td>
+                                            <td>
+                                                <button class="btn btn-outline-danger" onclick="confirmDelete('@item.BlogId')">Sil</button>
+                                            </td>
                                             <td><a href="/Admin/Blog/UpdateBlogModal/@item.BlogId" class="btn btn-outline-success">Güncelle</a></td>
                                         </tr>
                                     }
@@ -64,3 +66,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    function confirmDelete(itemId) {
+        Swal.fire({
+            title: 'Blogu silmek istediğinize emin misiniz?',
+            text: "Bu işlem geri alınamaz!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/Admin/Blog/RemoveBlog/${itemId}`;
+            }
+        });
+    }
+</script>

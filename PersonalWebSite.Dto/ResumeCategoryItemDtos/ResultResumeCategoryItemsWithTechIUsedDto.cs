@@ -16,6 +16,7 @@ namespace PersonalWebSite.Dto.ResumeCategoryItemDtos
 		public string? Header { get; set; }
 		public string? Description { get; set; }
 		public int ResumeCategoryId { get; set; }
-		public List<string> TechNames { get; set; }
+        public string ResumeCategoryName { get; set; }
+        public List<string> TechNames { get; set; }
 	}
 }

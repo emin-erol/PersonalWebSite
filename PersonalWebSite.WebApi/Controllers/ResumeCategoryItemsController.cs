@@ -44,6 +44,14 @@ namespace PersonalWebSite.WebApi.Controllers
             return Ok(values);
         }
 
+        [HttpGet("GetResumeCategoryItemsByResumeCategoryId/{id}")]
+        public async Task<IActionResult> GetResumeCategoryItemsByResumeCategoryId(int id)
+        {
+            var values = await _resumeCategoryItemDal.GetResumeCategoryItemsByResumeCategoryId(id);
+
+            return Ok(values);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateResumeCategoryItem(CreateResumeCategoryItemViewModel model)
         {

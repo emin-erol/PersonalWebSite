@@ -193,19 +193,5 @@ namespace PersonalWebSite.Areas.Admin.Controllers
 
             return View("UpdateAbout", dto);
         }
-
-        [Route("RemoveAbout/{id}")]
-        [Authorize]
-        public async Task<IActionResult> RemoveAbout(int id)
-        {
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.DeleteAsync("https://localhost:7007/api/Abouts?id=" + id);
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction("Index", "About");
-            }
-
-            return View();
-        }
     }
 }

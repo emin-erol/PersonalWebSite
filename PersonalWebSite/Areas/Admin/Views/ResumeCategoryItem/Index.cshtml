@@ -21,6 +21,7 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
+                                        <th>Kategori</th>
                                         <th>Konu Başlığı</th>
                                         <th>Başlangıç Tarihi</th>
                                         <th>Bitiş Tarihi</th>
@@ -38,9 +39,10 @@
                                         count++;
                                         <tr>
                                             <td>@count</td>
+                                            <td>@item.ResumeCategoryName</td>
                                             <td>@item.Title</td>
-                                            <td>@item.StartDate</td>
-                                            <td>@item.EndDate</td>
+                                            <td>@item.StartDate.ToString("dd.MM.yyyy")</td>
+                                            <td>@item.EndDate.ToString("dd.MM.yyyy")</td>
                                             <td>@item.IconUrl</td>
                                             <td>@item.Header</td>
                                             <td>@item.Description</td>
@@ -52,7 +54,9 @@
                                                     }
                                                 </ul>
                                             </td>
-                                            <td><a href="/Admin/ResumeCategoryItem/RemoveResumeCategoryItem/@item.ResumeCategoryItemId" class="btn btn-outline-danger">Sil</a></td>
+                                            <td>
+                                                <button class="btn btn-outline-danger" onclick="confirmDelete('@item.ResumeCategoryItemId')">Sil</button>
+                                            </td>
                                             <td><a href="/Admin/ResumeCategoryItem/UpdateResumeCategoryItemModal/@item.ResumeCategoryItemId" class="btn btn-outline-success">Güncelle</a></td>
                                         </tr>
                                     }
@@ -68,3 +72,23 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDelete(itemId) {
+        Swal.fire({
+            title: 'Kaydı silmek istediğinize emin misiniz?',
+            text: "Bu işlem geri alınamaz!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/Admin/ResumeCategoryItem/RemoveResumeCategoryItem/${itemId}`;
+            }
+        });
+    }
+</script>

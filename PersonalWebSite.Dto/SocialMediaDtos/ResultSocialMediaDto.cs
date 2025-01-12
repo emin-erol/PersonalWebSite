@@ -9,6 +9,7 @@ namespace PersonalWebSite.Dto.SocialMediaDtos
     public class ResultSocialMediaDto
     {
         public int SocialMediaId { get; set; }
+        public string Name { get; set; }
         public string IconUrl { get; set; }
         public string SocialMediaUrl { get; set; }
     }

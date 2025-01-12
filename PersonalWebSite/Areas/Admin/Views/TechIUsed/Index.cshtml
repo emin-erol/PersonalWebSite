@@ -12,9 +12,9 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Ana Sayfa Banner Alanı</h4>
+                        <h4 class="card-title">Kullanılan Teknolojiler</h4>
                         <p class="card-subtitle mb-4">
-                            Anasayfanın Banner alanında bulunan bilgileri aşağıdaki sayfadan düzenleyebilirsiniz.
+                            Anasayfanın Resume alanında bulunan kayıtlar için kullanılan teknolojileri aşağıdaki sayfadan düzenleyebilirsiniz.
                         </p>
                         <div class="table-responsive">
                             <table class="table mb-0">
@@ -33,7 +33,9 @@
                                         <tr>
                                             <td>@count</td>
                                             <td>@item.Name</td>
-                                            <td><a href="/Admin/TechIUsed/RemoveTechIUsed/@item.TechIUsedId" class="btn btn-outline-danger">Sil</a></td>
+                                            <td>
+                                                <button class="btn btn-outline-danger" onclick="confirmDelete('@item.TechIUsedId')">Sil</button>
+                                            </td>
                                             <td><a href="/Admin/TechIUsed/UpdateTechIUsedModal/@item.TechIUsedId" class="btn btn-outline-success">Güncelle</a></td>
                                         </tr>
                                     }
@@ -49,3 +51,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    function confirmDelete(itemId) {
+        Swal.fire({
+            title: 'Teknoloji kaydını silmek istediğinize emin misiniz?',
+            text: "Teknoloji, kullanılan Kategori elemanlarından da silinecektir!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/Admin/TechIUsed/RemoveTechIUsed/${itemId}`;
+            }
+        });
+    }
+</script>

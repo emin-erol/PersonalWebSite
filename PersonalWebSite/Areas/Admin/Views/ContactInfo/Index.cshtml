@@ -37,7 +37,9 @@
                                             <td>@item.Title</td>
                                             <td>@item.Description</td>
                                             <td>@item.IconUrl</td>
-                                            <td><a href="/Admin/ContactInfo/RemoveContactInfo/@item.ContactInfoId" class="btn btn-outline-danger">Sil</a></td>
+                                            <td>
+                                                <button class="btn btn-outline-danger" onclick="confirmDelete('@item.ContactInfoId')">Sil</button>
+                                            </td>
                                             <td><a href="/Admin/ContactInfo/UpdateContactInfoModal/@item.ContactInfoId" class="btn btn-outline-success">Güncelle</a></td>
                                         </tr>
                                     }
@@ -52,3 +54,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    function confirmDelete(itemId) {
+        Swal.fire({
+            title: 'Kaydı silmek istediğinize emin misiniz?',
+            text: "Bu işlem geri alınamaz!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'Vazgeç'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/Admin/ContactInfo/RemoveContactInfo/${itemId}`;
+            }
+        });
+    }
+</script>
