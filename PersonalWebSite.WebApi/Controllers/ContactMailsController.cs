@@ -31,6 +31,13 @@ namespace PersonalWebSite.WebApi.Controllers
             return Ok(value);
         }
 
+        [HttpGet("GetNumberOfUnreadMails")]
+        public async Task<IActionResult> GetNumberOfUnreadMails()
+        {
+            var value = await _contactMailDal.GetNumberOfUnreadMails();
+            return Ok(value);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateContactMail(CreateContactMailViewModel model)
         {

@@ -48,5 +48,10 @@ namespace PersonalWebSite.Service.Repositories
                 throw new ArgumentException($"ContactMail with ID {contactMailId} not found.");
             }
         }
+
+        public async Task<int> GetNumberOfUnreadMails()
+        {
+            return await _context.ContactMails.Where(mail => mail.IsRead == false).CountAsync();
+        }
     }
 }

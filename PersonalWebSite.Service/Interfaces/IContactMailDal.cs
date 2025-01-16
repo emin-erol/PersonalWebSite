@@ -10,5 +10,6 @@ namespace PersonalWebSite.Service.Interfaces
     public interface IContactMailDal : IGenericDal<ContactMail>
     {
         Task MarkAsRead(int contactMailId);
+        Task<int> GetNumberOfUnreadMails();
     }
 }

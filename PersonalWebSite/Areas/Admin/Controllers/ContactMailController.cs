@@ -34,6 +34,22 @@ namespace PersonalWebSite.Areas.Admin.Controllers
             return View();
         }
 
+        [Route("GetNumberOfUnreadMails")]
+        public async Task<int> GetNumberOfUnreadMails()
+        {
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync("https://localhost:7007/api/ContactMails/GetNumberOfUnreadMails");
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonData = await response.Content.ReadAsStringAsync();
+                var value = JsonConvert.DeserializeObject<int>(jsonData);
+
+                return value;
+            }
+
+            return 0;
+        }
+
         [Route("MarkMailAsRead")]
         [HttpPost("MarkMailAsRead/{id}")]
         public async Task<IActionResult> MarkMailAsRead(int id)
