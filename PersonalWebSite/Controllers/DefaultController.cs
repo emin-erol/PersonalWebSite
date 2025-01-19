@@ -47,9 +47,15 @@ namespace PersonalWebSite.Controllers
 
             SmtpClient smtpClient = new SmtpClient();
             smtpClient.Connect("smtp.gmail.com", 587, false);
-            smtpClient.Authenticate("erolemin76@gmail.com", "dbzmdujfqwyuizlu");
+            smtpClient.Authenticate("erolemin76@gmail.com", "oemwerljjnnehchv");
             smtpClient.Send(mimeMessage);
             smtpClient.Disconnect(true);
+
+            var utcTime = DateTime.UtcNow;
+            var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Turkey Standard Time");
+            var localTime = TimeZoneInfo.ConvertTimeFromUtc(utcTime, timeZoneInfo);
+
+            dto.ShippingDate = localTime;
 
             var client = _httpClientFactory.CreateClient();
             var jsonData = JsonConvert.SerializeObject(dto);

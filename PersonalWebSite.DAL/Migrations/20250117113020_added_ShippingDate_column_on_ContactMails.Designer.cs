@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PersonalWebSite.DAL.Core;
 
@@ -11,9 +12,11 @@ using PersonalWebSite.DAL.Core;
 namespace PersonalWebSite.DAL.Migrations
 {
     [DbContext(typeof(PersonalWebSiteDbContext))]
-    partial class PersonalWebSiteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250117113020_added_ShippingDate_column_on_ContactMails")]
+    partial class added_ShippingDate_column_on_ContactMails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

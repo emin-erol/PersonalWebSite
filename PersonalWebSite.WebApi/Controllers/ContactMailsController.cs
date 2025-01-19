@@ -47,8 +47,10 @@ namespace PersonalWebSite.WebApi.Controllers
                 Message = model.Message,
                 Name = model.Name,
                 Subject = model.Subject,
-                IsRead = false
+                IsRead = false,
+                ShippingDate = model.ShippingDate,
             };
+
             await _contactMailDal.CreateAsync(contactMail);
             return Ok("ContactMail information has been created.");
         }

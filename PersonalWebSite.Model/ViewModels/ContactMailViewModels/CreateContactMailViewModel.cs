@@ -13,5 +13,6 @@ namespace PersonalWebSite.Model.ViewModels.ContactMailViewModels
         public string? Subject { get; set; }
         public string? Message { get; set; }
         public bool IsRead { get; set; }
+        public DateTime ShippingDate { get; set; }
     }
 }
