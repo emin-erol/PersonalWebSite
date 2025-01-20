@@ -73,5 +73,25 @@ namespace PersonalWebSite.WebApi.Controllers
             }
         }
 
+        [HttpDelete("RemoveBulk")]
+        public async Task<IActionResult> RemoveBulk([FromBody] List<int> contactMailIds)
+        {
+            if (contactMailIds == null || !contactMailIds.Any())
+            {
+                return BadRequest("Silinecek mail ID'leri belirtilmedi.");
+            }
+
+            try
+            {
+                await _contactMailDal.RemoveBulk(contactMailIds);
+
+                return Ok(new { message = "Seçilen mailler başarıyla silindi." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Bir hata oluştu.", error = ex.Message });
+            }
+        }
+
     }
 }

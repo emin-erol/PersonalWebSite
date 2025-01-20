@@ -70,5 +70,40 @@ namespace PersonalWebSite.Areas.Admin.Controllers
                 return StatusCode(500, "Mail okundu olarak işaretlenemedi.");
             }
         }
+
+        [Route("RemoveBulk")]
+        [HttpDelete("RemoveBulk")]
+        public async Task<IActionResult> RemoveBulk([FromBody] List<int> contactMailIds)
+        {
+            var client = _httpClientFactory.CreateClient();
+
+            string apiUrl = "https://localhost:7007/api/ContactMails/RemoveBulk";
+            var jsonData = JsonConvert.SerializeObject(contactMailIds);
+
+            StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+
+            var request = new HttpRequestMessage(HttpMethod.Delete, apiUrl)
+            {
+                Content = content
+            };
+
+            try
+            {
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Seçilen mailler başarıyla silindi." });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Mail silme işlemi başarısız oldu." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Bir hata oluştu: " + ex.Message });
+            }
+        }
     }
 }

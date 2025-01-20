@@ -11,5 +11,6 @@ namespace PersonalWebSite.Service.Interfaces
     {
         Task MarkAsRead(int contactMailId);
         Task<int> GetNumberOfUnreadMails();
+        Task RemoveBulk(List<int> contactMailIds);
     }
 }

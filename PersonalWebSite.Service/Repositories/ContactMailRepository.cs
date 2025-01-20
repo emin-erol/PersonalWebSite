@@ -53,5 +53,23 @@ namespace PersonalWebSite.Service.Repositories
         {
             return await _context.ContactMails.Where(mail => mail.IsRead == false).CountAsync();
         }
+
+        public async Task RemoveBulk(List<int> contactMailIds)
+        {
+            if(contactMailIds == null || !contactMailIds.Any())
+            {
+                throw new ArgumentException("Silinecek mail ID'leri belirtilmedi.");
+            }
+
+            var mailsToDelete = await _context.ContactMails
+                .Where(mail => contactMailIds.Contains(mail.ContactMailId))
+                .ToListAsync();
+
+            if (mailsToDelete.Any() )
+            {
+                _context.ContactMails.RemoveRange(mailsToDelete);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }
