@@ -44,6 +44,10 @@
             background-color: #f0f0f0;
         }
 
+    .mail-checkbox {
+        cursor: pointer;
+    }
+
     .unread-mail td {
         font-weight: bold;
     }
@@ -59,9 +63,11 @@
                             <h4 class="card-title">Mailler</h4>
                             <div class="d-flex justify-content-end align-items-center mb-4 gap-2">
                                 <div id="actionButtons" class="mx-2" style="display: none;">
-                                    <button id="deleteSelected" class="btn btn-outline-danger">Sil</button>
-                                    <button id="markAsReadSelected" class="btn btn-outline-success">Okundu Olarak İşaretle</button>
+                                    <button id="deleteSelected" class="btn btn-outline-danger mr-1">Sil</button>
+                                    <button id="markAsReadSelected" class="btn btn-outline-success mr-1">Okundu Olarak İşaretle</button>
+                                    <button id="markAll" class="btn btn-outline-secondary">Tümünü İşaretle</button>
                                 </div>
+                                <button id="filterButton" class="btn btn-outline-warning mx-2" data-bs-toggle="modal" data-bs-target="#filterModal">Filtrele</button>
                                 <button id="toggleSelect" class="btn btn-outline-primary">Seç</button>
                             </div>
                         </div>
@@ -86,18 +92,18 @@
                                     {
                                         count++;
                                         var isUnreadClass = item.IsRead == false ? "unread-mail" : "";
-                                        <tr class="clickable-row @isUnreadClass" data-toggle="modal" data-target="#mailModal"
+                                        <tr class="clickable-row @isUnreadClass mail-row" data-toggle="modal" data-target="#mailModal"
                                             data-id="@item.ContactMailId" data-name="@item.Name" data-email="@item.Email"
                                             data-subject="@item.Subject" data-message="@item.Message" data-date="@item.ShippingDate">
                                             <td style="display: none;" class="select-column">
                                                 <input type="checkbox" class="mail-checkbox" onchange="highlightRow(this)">
                                             </td>
                                             <td>@count</td>
-                                            <td>@item.Name</td>
-                                            <td>@item.Email</td>
-                                            <td>@item.Subject</td>
-                                            <td>@ShortenMessage(item.Message!)</td>
-                                            <td>@item.ShippingDate.ToString("dd.MM.yyyy")</td>
+                                            <td class="mail-name">@item.Name</td>
+                                            <td class="mail-email">@item.Email</td>
+                                            <td class="mail-subject">@item.Subject</td>
+                                            <td class="mail-message">@ShortenMessage(item.Message!)</td>
+                                            <td class="mail-date" data-date="@item.ShippingDate.ToString("yyyy-MM-dd")">@item.ShippingDate.ToString("dd.MM.yyyy")</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -134,18 +140,67 @@
     </div>
 </div>
 
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">Filtrele</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="filterForm">
+                    <div class="mb-3">
+                        <label for="filterName" class="form-label">Ad - Soyad</label>
+                        <input type="text" id="filterName" class="form-control" placeholder="Ad - Soyad">
+                    </div>
+                    <div class="mb-3">
+                        <label for="filterEmail" class="form-label">Email Adresi</label>
+                        <input type="email" id="filterEmail" class="form-control" placeholder="Email Adresi">
+                    </div>
+                    <div class="mb-3">
+                        <label for="filterSubject" class="form-label">Konu</label>
+                        <input type="text" id="filterSubject" class="form-control" placeholder="Konu">
+                    </div>
+                    <div class="mb-3">
+                        <label for="filterMessage" class="form-label">Mesaj</label>
+                        <input type="text" id="filterMessage" class="form-control" placeholder="Mesaj">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="filterStartDate" class="form-label">Başlangıç Tarihi</label>
+                            <input type="date" id="filterStartDate" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="filterEndDate" class="form-label">Bitiş Tarihi</label>
+                            <input type="date" id="filterEndDate" class="form-control">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="clearFilters" type="button" class="btn btn-secondary">Filtreleri Kaldır</button>
+                <button id="applyFilters" type="button" class="btn btn-primary">Uygula</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     let isSelectMode = false;
 
-        $(document).ready(function () {
+    $(document).ready(function () {
         $('#toggleSelect').click(function () {
             const selectColumns = $('.select-column');
             const checkboxes = $('.mail-checkbox');
+            const markAllButton = $('#markAll');
 
             if (selectColumns.is(':visible')) {
                 selectColumns.hide();
                 checkboxes.prop('checked', false);
                 $('tr').removeClass('highlighted-row');
+                markAllButton.text('Tümünü İşaretle');
                 $(this).text('Seç');
                 isSelectMode = false;
                 $('#actionButtons').hide();
@@ -157,8 +212,10 @@
             }
         });
 
-        $('.mail-checkbox').on('change', function () {
+        $('.mail-checkbox').on('click', function (e) {
+            e.stopPropagation();
             highlightRow(this);
+            toggleMarkAllButton();
         });
 
         $('.clickable-row').on('click', function (e) {
@@ -166,79 +223,201 @@
                 const checkbox = $(this).find('.mail-checkbox');
                 checkbox.prop('checked', !checkbox.prop('checked'));
                 highlightRow(checkbox);
+                toggleMarkAllButton();
                 e.stopPropagation();
             } else {
                 showMailDetails(this);
             }
         });
 
-            $('#deleteSelected').click(function () {
-                const selectedMailIds = [];
+        $('#deleteSelected').click(function () {
+            const selectedMailIds = [];
 
-                $('.mail-checkbox:checked').each(function () {
-                    const mailId = $(this).closest('tr').data('id');
-                    selectedMailIds.push(mailId);
-                });
+            $('.mail-checkbox:checked').each(function () {
+                const mailId = $(this).closest('tr').data('id');
+                selectedMailIds.push(mailId);
+            });
 
-                if (selectedMailIds.length > 0) {
-                    $.ajax({
-                        url: '/Admin/ContactMail/RemoveBulk',
-                        type: 'DELETE',
-                        contentType: 'application/json',
-                        data: JSON.stringify(selectedMailIds),
-                        success: function (response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Başarılı',
-                                    text: response.message,
-                                    confirmButtonText: 'Tamam'
-                                });
+            if (selectedMailIds.length > 0) {
+                Swal.fire({
+                    title: 'Emin misiniz?',
+                    text: 'Seçili mailler silinecek!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Evet, sil!',
+                    cancelButtonText: 'Hayır, iptal et',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/Admin/ContactMail/RemoveBulk',
+                            type: 'DELETE',
+                            contentType: 'application/json',
+                            data: JSON.stringify(selectedMailIds),
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Başarılı',
+                                        text: response.message,
+                                        confirmButtonText: 'Tamam',
+                                    });
 
-                                $('#toggleSelect').text('Seç');
-                                $('.select-column').hide();
-                                $('tr').removeClass('highlighted-row');
-                                isSelectMode = false;
-                                $('#actionButtons').hide();
+                                    $('.mail-checkbox:checked').each(function () {
+                                        $(this).closest('tr').remove();
+                                    });
 
-                                $('.mail-checkbox:checked').each(function () {
-                                    $(this).closest('tr').remove();
-                                });
-                            } else {
+                                    closeSelectionMode();
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Hata',
+                                        text: response.message,
+                                        confirmButtonText: 'Tamam',
+                                    });
+                                }
+                            },
+                            error: function () {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Hata',
-                                    text: response.message,
-                                    confirmButtonText: 'Tamam'
+                                    text: 'Silme işlemi başarısız oldu.',
+                                    confirmButtonText: 'Tamam',
                                 });
-                            }
-                        },
-                        error: function (error) {
-                            console.error('Mail silme işlemi başarısız:', error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Hata',
-                                text: 'Silme işlemi başarısız oldu.',
-                                confirmButtonText: 'Tamam'
-                            });
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Uyarı',
-                        text: 'Silinecek mail seçmediniz.',
-                        confirmButtonText: 'Tamam'
-                    });
+                            },
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Uyarı',
+                    text: 'Silinecek mail seçmediniz.',
+                    confirmButtonText: 'Tamam',
+                });
+            }
+        });
+
+        $('#markAsReadSelected').click(function () {
+            const selectedMailIds = [];
+
+            $('.mail-checkbox:checked').each(function () {
+                const mailId = $(this).closest('tr').data('id');
+                const isUnread = $(this).closest('tr').hasClass('unread-mail');
+
+                if (isUnread) {
+                    selectedMailIds.push(mailId);
                 }
             });
 
-        function highlightRow(checkbox) {
-            const row = $(checkbox).closest('tr');
-            if ($(checkbox).is(':checked')) {
-                row.addClass('highlighted-row');
+            if (selectedMailIds.length > 0) {
+                selectedMailIds.forEach(mailId => {
+                    $.ajax({
+                        url: '/Admin/ContactMail/MarkMailAsRead/' + mailId,
+                        type: 'POST',
+                        success: function () {
+                            $('tr[data-id="' + mailId + '"]').removeClass('unread-mail');
+                        },
+                        error: function () {
+                            console.error('Mail işaretlenemedi: ID = ' + mailId);
+                        }
+                    });
+                });
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Başarılı',
+                    text: 'Seçilen okunmamış mailler okundu olarak işaretlendi.',
+                    confirmButtonText: 'Tamam'
+                });
+
+                closeSelectionMode();
             } else {
-                row.removeClass('highlighted-row');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Uyarı',
+                    text: 'Okunmamış olarak işaretlenecek bir mail seçmediniz.',
+                    confirmButtonText: 'Tamam'
+                });
+            }
+        });
+
+        $('#markAll').click(function () {
+            const button = $(this);
+            const checkboxes = $('.mail-checkbox');
+
+            if (button.text() === 'Tümünü İşaretle') {
+                checkboxes.each(function () {
+                    $(this).prop('checked', true);
+                    highlightRow(this);
+                });
+                button.text('İşaretleri Kaldır');
+            } else {
+                checkboxes.each(function () {
+                    $(this).prop('checked', false);
+                    highlightRow(this);
+                });
+                button.text('Tümünü İşaretle');
+            }
+        });
+
+        $('#filterButton').on('click', function () {
+            $('#filterModal').modal('show');
+        });
+
+        $('#applyFilters').click(function () {
+            const filterName = $('#filterName').val().toLowerCase();
+            const filterEmail = $('#filterEmail').val().toLowerCase();
+            const filterSubject = $('#filterSubject').val().toLowerCase();
+            const filterMessage = $('#filterMessage').val().toLowerCase();
+            const filterStartDate = $('#filterStartDate').val();
+            const filterEndDate = $('#filterEndDate').val();
+
+            $('table tbody tr').each(function () {
+                const name = $(this).find('.mail-name').text().toLowerCase();
+                const email = $(this).find('.mail-email').text().toLowerCase();
+                const subject = $(this).find('.mail-subject').text().toLowerCase();
+                const message = $(this).find('.mail-message').text().toLowerCase();
+                const mailDate = $(this).find('.mail-date').data('date');
+
+                let isVisible = true;
+
+                if (filterName && !name.includes(filterName)) isVisible = false;
+                if (filterEmail && !email.includes(filterEmail)) isVisible = false;
+                if (filterSubject && !subject.includes(filterSubject)) isVisible = false;
+                if (filterMessage && !message.includes(filterMessage)) isVisible = false;
+                if (filterStartDate && new Date(mailDate) < new Date(filterStartDate)) isVisible = false;
+                if (filterEndDate && new Date(mailDate) > new Date(filterEndDate)) isVisible = false;
+
+                $(this).toggle(isVisible);
+            });
+
+            $('#filterModal').modal('hide');
+        });
+
+        $('#clearFilters').on('click', function () {
+            $('#filterForm')[0].reset();
+            $('.mail-row').show();
+        });
+
+        function closeSelectionMode() {
+            $('#toggleSelect').text('Seç');
+            $('.select-column').hide();
+            $('.mail-checkbox').prop('checked', false);
+            $('tr').removeClass('highlighted-row');
+            $('#markAll').text('Tümünü İşaretle');
+            $('#actionButtons').hide();
+            isSelectMode = false;
+        }
+
+        function toggleMarkAllButton() {
+            const checkboxes = $('.mail-checkbox');
+            const allChecked = checkboxes.length === checkboxes.filter(':checked').length;
+            const markAllButton = $('#markAll');
+
+            if (allChecked) {
+                markAllButton.text('İşaretleri Kaldır');
+            } else {
+                markAllButton.text('Tümünü İşaretle');
             }
         }
 
@@ -276,5 +455,12 @@
         }
     });
 
+    function highlightRow(checkbox) {
+        const row = $(checkbox).closest('tr');
+        if ($(checkbox).is(':checked')) {
+            row.addClass('highlighted-row');
+        } else {
+            row.removeClass('highlighted-row');
+        }
+    }
 </script>
-
