@@ -28,7 +28,8 @@
 
                             <div class="form-group">
                                 <label for="profileMessage">Profil Mesajı</label>
-                                <input type="text" class="form-control" id="profileMessage" asp-for="ProfileMessage" placeholder="Profil Mesajını Giriniz" required>
+                                @* <input type="text" class="form-control" id="profileMessage" asp-for="ProfileMessage" placeholder="Profil Mesajını Giriniz" required> *@
+                                <textarea class="form-control" id="profileMessage" asp-for="ProfileMessage" rows="5" placeholder="Profil Mesajını Giriniz" required></textarea>
                             </div>
 
                             <div>

@@ -57,19 +57,6 @@ namespace PersonalWebSite.Areas.Admin.Controllers
             return View("CreateFooterModal", dto);
         }
 
-        //[Route("RemoveFooter/{id}")]
-        //public async Task<IActionResult> RemoveFooter(int id)
-        //{
-        //    var client = _httpClientFactory.CreateClient();
-        //    var response = await client.DeleteAsync("https://localhost:7007/api/Footers?id=" + id);
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        return RedirectToAction("Index", "Footer");
-        //    }
-
-        //    return View();
-        //}
-
         [HttpGet]
         [Route("UpdateFooterModal/{id}")]
         public async Task<IActionResult> UpdateFooterModal(int id)

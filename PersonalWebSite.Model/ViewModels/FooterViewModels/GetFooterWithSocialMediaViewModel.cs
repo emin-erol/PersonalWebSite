@@ -9,6 +9,7 @@ namespace PersonalWebSite.Model.ViewModels.FooterViewModels
 {
 	public class GetFooterWithSocialMediaViewModel
 	{
+        public int FooterId { get; set; }
         public string? Description { get; set; }
         public List<SocialMedia> SocialMedias { get; set; }
     }

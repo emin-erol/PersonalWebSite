@@ -52,6 +52,7 @@ namespace PersonalWebSite.Service.Repositories
 
 			var result = footers.Select(footer => new GetFooterWithSocialMediaViewModel
 			{
+                FooterId = footer.FooterId,
 				Description = footer.Description,
 				SocialMedias = socialMedias
 			}).ToList();
