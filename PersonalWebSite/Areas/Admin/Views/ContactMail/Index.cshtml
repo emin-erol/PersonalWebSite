@@ -67,7 +67,8 @@
                                     <button id="markAsReadSelected" class="btn btn-outline-success mr-1">Okundu Olarak İşaretle</button>
                                     <button id="markAll" class="btn btn-outline-secondary">Tümünü İşaretle</button>
                                 </div>
-                                <button id="filterButton" class="btn btn-outline-warning mx-2" data-bs-toggle="modal" data-bs-target="#filterModal">Filtrele</button>
+                                <button id="filterButton" class="btn btn-outline-warning mr-2" data-bs-toggle="modal" data-bs-target="#filterModal">Filtrele</button>
+                                <button id="sorterButton" class="btn btn-outline-secondary mr-2" data-bs-toggle="modal" data-bs-target="#sorterModal">Sırala</button>
                                 <button id="toggleSelect" class="btn btn-outline-primary">Seç</button>
                             </div>
                         </div>
@@ -94,7 +95,7 @@
                                         var isUnreadClass = item.IsRead == false ? "unread-mail" : "";
                                         <tr class="clickable-row @isUnreadClass mail-row" data-toggle="modal" data-target="#mailModal"
                                             data-id="@item.ContactMailId" data-name="@item.Name" data-email="@item.Email"
-                                            data-subject="@item.Subject" data-message="@item.Message" data-date="@item.ShippingDate">
+                                            data-subject="@item.Subject" data-message="@item.Message" data-date="@item.ShippingDate" data-isread="@item.IsRead">
                                             <td style="display: none;" class="select-column">
                                                 <input type="checkbox" class="mail-checkbox" onchange="highlightRow(this)">
                                             </td>
@@ -186,6 +187,45 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="sorterModal" tabindex="-1" aria-labelledby="sorterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sorterModalLabel">Sıralama Ayarları</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="sortDate" class="form-label">Gönderim Tarihine Göre</label>
+                    <select id="sortDate" class="form-select">
+                        <option value="desc">Yeni tarihten eskiye</option>
+                        <option value="asc">Eski tarihten yeniye</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Okundu Bilgisine Göre</label>
+                    <div class="form-check">
+                        <input type="radio" id="unreadFirst" name="sortReadStatus" class="form-check-input" value="unreadFirst">
+                        <label for="unreadFirst" class="form-check-label">Önce okunmamış mesajları göster</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" id="readFirst" name="sortReadStatus" class="form-check-input" value="readFirst">
+                        <label for="readFirst" class="form-check-label">Önce okunmuş mesajları göster</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="clearSorter" class="btn btn-outline-secondary">Seçimleri Kaldır</button>
+                <button id="applySorter" class="btn btn-primary">Sırala</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
     let isSelectMode = false;
@@ -397,6 +437,57 @@
         $('#clearFilters').on('click', function () {
             $('#filterForm')[0].reset();
             $('.mail-row').show();
+        });
+
+        $('#sorterButton').on('click', function () {
+            $('#sorterModal').modal('show');
+        });
+
+        $('#applySorter').click(function () {
+            const sortDate = $('#sortDate').val();
+            const sortReadStatus = $('input[name="sortReadStatus"]:checked').val();
+
+            const rows = $('table tbody tr').get();
+
+            rows.sort(function (a, b) {
+                const dateA = new Date($(a).find('.mail-date').data('date'));
+                const dateB = new Date($(b).find('.mail-date').data('date'));
+
+                const isReadA = $(a).data('isread') === 'True' ? 1 : 0;
+                const isReadB = $(b).data('isread') === 'True' ? 1 : 0;
+
+                if (sortDate === 'asc') {
+                    if (dateA < dateB) return -1;
+                    if (dateA > dateB) return 1;
+                } else if (sortDate === 'desc') {
+                    if (dateA > dateB) return -1;
+                    if (dateA < dateB) return 1;
+                }
+
+                if (sortReadStatus === 'unreadFirst') {
+                    return isReadA - isReadB;
+                } else if (sortReadStatus === 'readFirst') {
+                    return isReadB - isReadA;
+                }
+
+                return 0;
+            });
+
+            $.each(rows, function (index, row) {
+                $('table tbody').append(row);
+            });
+
+            $('#sorterModal').modal('hide');
+        });
+
+        $('#clearSorter').click(function () {
+            $('#sortDate').val('desc');
+            $('input[name="sortReadStatus"]').prop('checked', false);
+
+            const rows = $('table tbody tr').get();
+            $.each(rows, function (index, row) {
+                $('table tbody').append(row);
+            });
         });
 
         function closeSelectionMode() {
