@@ -19,6 +19,32 @@ namespace PersonalWebSite.WebApi.Controllers
             _managementRepository = managementRepository;
         }
 
+        [HttpGet("GetAllUsers")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await _managementRepository.GetAllUsers();
+            if (users.Any())
+            {
+                return Ok(users);
+            }
+
+            return BadRequest("Hiçbir kullanıcı bulunamadı.");
+        }
+
+        [HttpGet("CheckEmailConfirmed/{email}")]
+        public async Task<IActionResult> CheckEmailConfirmed(string email)
+        {
+            try
+            {
+                var check = await _managementRepository.CheckEmailConfirmed(email);
+                return Ok(check);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Beklenmeyen bir hata oluştu.", details = ex.Message });
+            }
+        }
+
         [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterViewModel request)
         {
@@ -56,16 +82,39 @@ namespace PersonalWebSite.WebApi.Controllers
             return Unauthorized("Email bulunamadı.");
         }
 
-        [HttpGet("GetAllUsers")]
-        public async Task<IActionResult> GetAllUsers()
+        [HttpPost("CheckVerificationCode")]
+        public async Task<IActionResult> CheckVerificationCode(string email, string verificationCode)
         {
-            var users = await _managementRepository.GetAllUsers();
-            if (users.Any())
+            try
             {
-                return Ok(users);
+                await _managementRepository.CheckVerificationCodeAsync(email, verificationCode);
+
+                return Ok(new { message = "Doğrulama başarılı." });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Beklenmeyen bir hata oluştu.", details = ex.Message });
+            }
+        }
+
+        [HttpPost("ChangeVerificationCode")]
+        public async Task<IActionResult> ChangeVerificationCode(string email)
+        {
+            try
+            {
+                await _managementRepository.ChangeVerificationCode(email);
+
+                return Ok(new { message = "Doğrulama kodu değiştirildi." });
             }
 
-            return BadRequest("Hiçbir kullanıcı bulunamadı.");
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Beklenmeyen bir hata oluştu.", details = ex.Message });
+            }
         }
     }
 }

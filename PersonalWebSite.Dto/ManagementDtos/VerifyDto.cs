@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PersonalWebSite.Model.Entities
+namespace PersonalWebSite.Dto.ManagementDtos
 {
-    public class AppUser : IdentityUser
+    public class VerifyDto
     {
+        public string Email { get; set; }
         public string VerificationCode { get; set; }
     }
 }

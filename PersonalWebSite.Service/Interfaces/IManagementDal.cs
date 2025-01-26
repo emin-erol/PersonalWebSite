@@ -15,5 +15,10 @@ namespace PersonalWebSite.Service.Interfaces
         Task<(bool, AppUser)> Login(LoginViewModel model);
         Task<(bool, AppUser)> Register(RegisterViewModel model);
         Task<List<AppUser>> GetAllUsers();
+        string GenerateVerificationCode();
+        Task CheckVerificationCodeAsync(string email, string verificationCode);
+        Task SendVerificationMail(string email, string verificationCode);
+        Task<bool> CheckEmailConfirmed(string email);
+        Task ChangeVerificationCode(string email);
     }
 }
