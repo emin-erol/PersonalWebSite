@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Management/Login";
+        options.LoginPath = "/Management/LoginModal";
         options.Cookie.HttpOnly = true;
         options.Cookie.IsEssential = true;
 

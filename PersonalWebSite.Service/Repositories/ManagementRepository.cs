@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using PersonalWebSite.DAL.Core;
 using PersonalWebSite.Model.Entities;
 using PersonalWebSite.Model.ViewModels.ManagementViewModels;
@@ -18,6 +19,7 @@ namespace PersonalWebSite.Service.Repositories
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly PersonalWebSiteDbContext _context;
+        private readonly IConfiguration _configuration;
 
         private readonly SmtpClient _smtpClient;
         private readonly string _fromAddress = "noreply@personalwebsite.com";
@@ -25,10 +27,11 @@ namespace PersonalWebSite.Service.Repositories
         private readonly int _smtpPort = 587;
         private readonly string _smtpUser = "erolemin76@gmail.com";
         private readonly string _smtpPass = "oemwerljjnnehchv";
-        public ManagementRepository(UserManager<AppUser> userManager, PersonalWebSiteDbContext context)
+        public ManagementRepository(UserManager<AppUser> userManager, PersonalWebSiteDbContext context, IConfiguration configuration)
         {
             _userManager = userManager;
             _context = context;
+            _configuration = configuration;
 
             _smtpClient = new SmtpClient(_smtpHost)
             {
@@ -46,6 +49,11 @@ namespace PersonalWebSite.Service.Repositories
         public async Task<AppUser> FindByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
+        }
+
+        public async Task<AppUser> FindByNameAsync(string userName)
+        {
+            return await _userManager.FindByNameAsync(userName);
         }
 
         public async Task<List<AppUser>> GetAllUsers()
@@ -68,7 +76,7 @@ namespace PersonalWebSite.Service.Repositories
                     return (false, user);
                 }
             }
-            return (false, user!);
+            return (false, null);
         }
 
         public async Task<(bool, AppUser)> Register(RegisterViewModel model)
@@ -147,6 +155,59 @@ namespace PersonalWebSite.Service.Repositories
             await _smtpClient.SendMailAsync(message);
         }
 
+        public async Task<bool> SendPasswordResetEmailAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var resetUrl = $"{_configuration["AppSettings:FrontendBaseUrl"]}/Management/ResetPasswordModal?email={WebUtility.UrlEncode(email)}&token={WebUtility.UrlEncode(resetToken)}";
+
+            var mailBody = $@"
+            <p>Merhaba {user.UserName},</p>
+            <p>Şifre sıfırlama talebinde bulundunuz. Şifrenizi sıfırlamak için aşağıdaki bağlantıya tıklayabilirsiniz:</p>
+            <p><a href='{resetUrl}'>Şifre Sıfırla</a></p>
+            <p>Bu bağlantı yalnızca bir kez kullanılabilir ve güvenlik amacıyla oluşturulmuştur. Eğer bu işlemi siz başlatmadıysanız, lütfen bu e-postayı dikkate almayınız.</p>
+            <p>Teşekkürler,</p>
+            <p>Destek Ekibi</p>";
+
+            var smtpHost = _configuration["EmailSettings:Host"];
+            var smtpPort = int.Parse(_configuration["EmailSettings:Port"]!);
+            var smtpUser = _configuration["EmailSettings:Username"];
+            var smtpPass = _configuration["EmailSettings:Password"];
+
+            try
+            {
+                using var smtpClient = new SmtpClient(smtpHost, smtpPort)
+                {
+                    Credentials = new NetworkCredential(smtpUser, smtpPass),
+                    EnableSsl = true
+                };
+
+                var mailMessage = new MailMessage
+                {
+                    From = new MailAddress(smtpUser, "Destek Ekibi"),
+                    Subject = "Şifre Sıfırlama Talebi",
+                    Body = mailBody,
+                    IsBodyHtml = true
+                };
+
+                mailMessage.To.Add(email);
+
+                await smtpClient.SendMailAsync(mailMessage);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
         public async Task<bool> CheckEmailConfirmed(string email)
         {
             var user = await this.FindByEmailAsync(email);
@@ -176,6 +237,27 @@ namespace PersonalWebSite.Service.Repositories
             {
                 throw new InvalidOperationException("Kullanıcı bulunamadı.");
             }
+        }
+
+        public async Task<IdentityResult> ResetPasswordAsync(AppUser user, string token, string newPassword)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(newPassword))
+            {
+                throw new ArgumentException("Token veya yeni şifre boş olamaz.");
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+            if (result.Succeeded)
+            {
+                await _context.SaveChangesAsync();
+            }
+
+            return result;
         }
     }
 }

@@ -23,7 +23,14 @@ namespace PersonalWebSite.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Register(RegisterDto request)
+        [HttpGet]
+        public IActionResult RegisterModal()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register([FromBody] RegisterDto request)
         {
             var client = _httpClientFactory.CreateClient();
             var jsonData = JsonConvert.SerializeObject(request);
@@ -36,10 +43,18 @@ namespace PersonalWebSite.Controllers
                 return RedirectToAction("VerifyModal", new { email = request.Email, message = message});
             }
 
+            var errorResponse = await response.Content.ReadAsStringAsync();
+            return BadRequest(new { message = errorResponse });
+        }
+
+        [HttpGet]
+        public IActionResult LoginModal()
+        {
             return View();
         }
 
-        public async Task<IActionResult> Login(LoginDto request)
+        [HttpPost]
+        public async Task<IActionResult> Login([FromBody] LoginDto request)
         {
             var client = _httpClientFactory.CreateClient();
             var jsonData = JsonConvert.SerializeObject(request);
@@ -65,19 +80,20 @@ namespace PersonalWebSite.Controllers
                         var principal = new ClaimsPrincipal(identity);
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-                        return RedirectToAction("Index", "Banner", new { area = "Admin" });
+                        return Json(new { success = true, redirectUrl = Url.Action("Index", "Banner", new { area = "Admin" }) });
                     }
                     else
                     {
                         var message = "Email Doğrulama Yapınız!";
-                        return RedirectToAction("VerifyModal", new { email = request.Email, message = message });
+                        return Json(new { redirectUrl = Url.Action("VerifyModal", new { email = request.Email, message = message }) });
                     }
                 }
             }
 
-            return View();
+            return BadRequest("Giriş işlemi başarısız.");
         }
 
+        [HttpGet]
         public IActionResult VerifyModal(string email, string message)
         {
             ViewBag.Email = email;
@@ -85,7 +101,8 @@ namespace PersonalWebSite.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Verify(VerifyDto request)
+        [HttpPost]
+        public async Task<IActionResult> Verify([FromBody] VerifyDto request)
         {
             if (ModelState.IsValid)
             {
@@ -96,26 +113,60 @@ namespace PersonalWebSite.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("Login");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Doğrulama kodu hatalı veya geçersiz.");
+                    return Json(new { success = true, redirectUrl = Url.Action("LoginModal") });
                 }
             }
-            
-            return View(request);
+
+            return BadRequest("Doğrulama kodu hatalı");
         }
 
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login", "Management");
+            return RedirectToAction("LoginModal", "Management");
         }
 
-        public async Task<IActionResult> ForgetPassword()
+        [HttpGet]
+        public IActionResult ForgetPasswordModal()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgetPassword([FromBody] string email)
+        {
+            var client = _httpClientFactory.CreateClient();
+
+            var response = await client.PostAsync("https://localhost:7007/api/Managements/ForgetPassword?email=" + email, null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok("Şifre sıfırlama maili başarıyla gönderildi.");
+            }
+
+            return BadRequest("Şifre sıfırlama maili gönderilirken hata oluştu.");
+        }
+
+        public IActionResult ResetPasswordModal(string email, string token)
+        {
+            ViewBag.Email = email;
+            ViewBag.Token = token;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
+        {
+            var client = _httpClientFactory.CreateClient();
+
+            var response = await client.PostAsJsonAsync("https://localhost:7007/api/Managements/ResetPassword", model);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok("Şifre başarıyla sıfırlandı.");
+            }
+
+            return BadRequest("Şifre sıfırlanırken hata oluştu.");
         }
 
         public string GenerateVerificationCode()
@@ -124,28 +175,6 @@ namespace PersonalWebSite.Controllers
             var code = random.Next(100000, 999999).ToString();
 
             return code;
-        }
-
-        public async Task SendVerificationEmailAsync(string email, string verificationCode)
-        {
-            var smtpClient = new SmtpClient("smtp.erolemin76@gmail.com")
-            {
-                Port = 587,
-                Credentials = new NetworkCredential("erolemin76@gmail.com", "ytfcv.98ef"),
-                EnableSsl = true,
-            };
-
-            var message = new MailMessage
-            {
-                From = new MailAddress("erolemin76@gmail.com"),
-                Subject = "Kayıt Doğrulama Kodu",
-                Body = $"Merhaba, \n\nKayıt işleminizi tamamlamak için doğrulama kodunuz: {verificationCode}",
-                IsBodyHtml = true,
-            };
-
-            message.To.Add(email);
-
-            await smtpClient.SendMailAsync(message);
         }
 
         public async Task<IActionResult> ChangeVerificationCode([FromBody] string email)

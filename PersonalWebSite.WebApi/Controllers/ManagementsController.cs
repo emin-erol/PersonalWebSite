@@ -50,6 +50,24 @@ namespace PersonalWebSite.WebApi.Controllers
         {
             if (ModelState.IsValid)
             {
+                var existingUserByEmail = await _managementRepository.FindByEmailAsync(request.Email);
+                var existingUserByUserName = await _managementRepository.FindByNameAsync(request.UserName);
+
+                if (existingUserByEmail != null && existingUserByUserName != null)
+                {
+                    return BadRequest(new { code = "11", message = "Girilen Kullanıcı Adı ve Email başka hesap tarafından kullanılmaktadır." });
+                }
+
+                if (existingUserByEmail != null)
+                {
+                    return BadRequest(new { code = "10", message = "Girilen Email başka hesap tarafından kullanılmaktadır." });
+                }
+
+                if (existingUserByUserName != null)
+                {
+                    return BadRequest(new { code = "01", message = "Girilen Kullanıcı Adı başka hesap tarafından kullanılmaktadır." });
+                }
+
                 (bool, AppUser) result = await _managementRepository.Register(request);
 
                 if (result.Item1)
@@ -57,10 +75,9 @@ namespace PersonalWebSite.WebApi.Controllers
                     return Ok("Kayıt işlemi başarılı.");
                 }
 
-                return BadRequest("Kayıt işlemi başarısız.");
-
+                return BadRequest(new { code = "99", message = "Kayıt işlemi başarısız, lütfen daha sonra tekrar deneyiniz." });
             }
-            return BadRequest("Geçersiz model.");
+            return BadRequest(new { code = "98", message = "Geçersiz model verisi gönderildi." });
         }
 
         [HttpPost("Login")]
@@ -115,6 +132,52 @@ namespace PersonalWebSite.WebApi.Controllers
             {
                 return StatusCode(500, new { message = "Beklenmeyen bir hata oluştu.", details = ex.Message });
             }
+        }
+
+        [HttpPost("ForgetPassword")]
+        public async Task<IActionResult> ForgetPassword(string email)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Geçersiz istek");
+            }
+
+            var result = await _managementRepository.SendPasswordResetEmailAsync(email);
+
+            if (result)
+            {
+                return Ok("Şifre sıfırlama e-postası başarıyla gönderildi.");
+            }
+
+            return BadRequest("Şifre sıfırlama işlemi başarısız oldu.");
+        }
+
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (model == null || string.IsNullOrEmpty(model.NewPassword) || string.IsNullOrEmpty(model.NewPasswordCheck))
+            {
+                return BadRequest("Geçersiz şifre.");
+            }
+
+            if (model.NewPassword != model.NewPasswordCheck)
+            {
+                return BadRequest("Şifreler eşleşmiyor.");
+            }
+
+            var user = await _managementRepository.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return NotFound("Kullanıcı bulunamadı.");
+            }
+
+            var result = await _managementRepository.ResetPasswordAsync(user, model.Token, model.NewPassword);
+            if (result.Succeeded)
+            {
+                return Ok("Şifre başarıyla sıfırlandı.");
+            }
+
+            return BadRequest("Şifre sıfırlama işlemi başarısız oldu.");
         }
     }
 }

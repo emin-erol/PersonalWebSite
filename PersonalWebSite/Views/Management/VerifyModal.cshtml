@@ -1,6 +1,4 @@
-﻿@model VerifyDto
-
-@{
+﻿@{
     ViewData["Title"] = "VerifyModal";
     Layout = "~/Views/ManagementUILayout/Index.cshtml";
     var email = ViewBag.Email as string;
@@ -15,13 +13,13 @@
         <h2 class="my-4"><strong>@message</strong></h2>
         <p>Lütfen mail adresinize gönderilen doğrulama kodunu giriniz.</p>
 
-        <form method="post" asp-action="Verify" asp-controller="Management">
+        <form id="verifyForm">
 
-            <input type="hidden" asp-for="Email" value="@email" />
+            <input type="hidden" id="email" value="@email" />
 
             <div class="form-group">
                 <label for="verificationCode">Doğrulama Kodu</label>
-                <input type="text" id="verificationCode" class="form-control" asp-for="VerificationCode">
+                <input type="text" id="verificationCode" class="form-control">
             </div>
 
             <button type="submit" class="btn btn-primary block full-width m-b">Kodu Gönder</button>
@@ -35,10 +33,40 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    
-
     $(document).ready(function () {
         let isDisabled = false;
+
+        $("#verifyForm").on("submit", function (e) {
+            e.preventDefault();
+
+            const formData = {
+                Email: $('#email').val(),
+                VerificationCode: $('#verificationCode').val()
+            };
+
+            console.log('formData:', formData);
+
+            $.ajax({
+                url: "/Management/Verify",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success("Doğrulama kodu onaylandı, giriş sayfasına yönlendiriliyor.");
+                        setTimeout(function () {
+                            window.location.href = response.redirectUrl;
+                        }, 2000);
+                    } else {
+                        toastr.error(response.message, "Hata");
+                    }
+                },
+                error: function () {
+                    toastr.error("Girilen doğrulama kodu hatalı, lütfen tekrar deneyiniz.", "Hata");
+                }
+            });
+
+        });
 
         $("#resendCodeButton").on("click", function () {
             if (isDisabled) return;
@@ -58,7 +86,7 @@
                 type: "POST",
                 contentType: "application/json",
                 data: JSON.stringify(email),
-                success: function (response) {
+                success: function () {
                     toastr.success("Doğrulama kodu başarıyla gönderildi.", "Başarılı");
                 },
                 error: function () {

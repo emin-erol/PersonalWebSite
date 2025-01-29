@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PersonalWebSite.DAL.Core;
 using PersonalWebSite.Model.Entities;
@@ -15,7 +16,7 @@ builder.Services.AddDbContext<PersonalWebSiteDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<PersonalWebSiteDbContext>();
+builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<PersonalWebSiteDbContext>().AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IAboutDal, AboutRepository>();
 builder.Services.AddScoped<IBannerDal, BannerRepository>();
