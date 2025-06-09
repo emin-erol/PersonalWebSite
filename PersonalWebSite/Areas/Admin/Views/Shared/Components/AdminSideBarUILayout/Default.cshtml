@@ -1,4 +1,9 @@
-﻿<div class="vertical-menu">
+﻿
+@{
+    var userName = ViewBag.UserName;
+}
+
+<div class="vertical-menu">
     <div data-simplebar class="h-100">
         <div class="navbar-brand-box">
             <a href="#" class="logo">
@@ -14,8 +19,8 @@
 
                 <li class="menu-title">Menü</li>
 
-                <li><a href="#" class="waves-effect"><i class="fas fa-pager"></i><span>Ana Menü</span></a></li>
-                <li><a href="/Default/Index" class="waves-effect" target="_blank"><i class="fas fa-home"></i><span>Siteye Git</span></a></li>
+                <li><a href="/Admin/MainPage/Index" class="waves-effect"><i class="fas fa-pager"></i><span>Ana Menü</span></a></li>
+                <li><a href="/Default/Index/@userName" class="waves-effect" target="_blank"><i class="fas fa-home"></i><span>Siteye Git</span></a></li>
                 <li><a href="/Admin/Banner/Index/" class="waves-effect"><i class="fas fa-certificate"></i><span>Banner Alanı</span></a></li>
                 <li><a href="/Admin/About/Index/" class="waves-effect"><i class="fas fa-info"></i><span>About Alanı</span></a></li>
 
@@ -30,7 +35,7 @@
                         <li><a href="/Admin/TechIUsed/Index/">Kullanılan Teknolojiler</a></li>
                     </ul>
                 </li>
-                
+
                 <li><a href="/Admin/Blog/Index/" class="waves-effect"><i class="fa-solid fa-book"></i><span>Bloglar</span></a></li>
                 <li>
                     <a href="/Admin/ContactMail/Index/" class="waves-effect d-flex justify-content-between align-items-center">
@@ -59,6 +64,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    console.log("Kullanıcı Adı: '@userName'");
     $(document).ready(function () {
 
         function fetchUnreadMessagesCount() {

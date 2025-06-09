@@ -15,5 +15,6 @@ namespace PersonalWebSite.Model.Entities
         public string? Message { get; set; }
         public bool IsRead { get; set; }
         public DateTime ShippingDate { get; set; }
+        public string UserId { get; set; }
     }
 }

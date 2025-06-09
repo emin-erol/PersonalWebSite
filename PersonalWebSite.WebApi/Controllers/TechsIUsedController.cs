@@ -37,12 +37,21 @@ namespace PersonalWebSite.WebApi.Controllers
             return Ok(values);
         }
 
+        [HttpGet("GetTechIUsedsByUserId/{userId}")]
+        public async Task<IActionResult> GetTechIUsedsByUserId(string userId)
+        {
+            var values = await _techIUsedDal.GetTechIUsedsByUserId(userId);
+
+            return Ok(values);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateTechIUsed(CreateTechIUsedViewModel model)
         {
             var techIUsed = new TechIUsed
             {
-                Name = model.Name
+                Name = model.Name,
+                UserId = model.UserId
             };
             await _techIUsedDal.CreateAsync(techIUsed);
             return Ok("TechIUsed information has been created.");
@@ -54,7 +63,7 @@ namespace PersonalWebSite.WebApi.Controllers
             var techIUsed = new TechIUsed
             {
                 TechIUsedId = model.TechIUsedId,
-                Name = model.Name
+                Name = model.Name,
             };
             await _techIUsedDal.UpdateAsync(techIUsed);
             return Ok("TechIUsed information has been updated.");

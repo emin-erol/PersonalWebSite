@@ -12,5 +12,6 @@ namespace PersonalWebSite.Model.Entities
         public string Name { get; set; }
         public string? IconUrl { get; set; }
         public string? SocialMediaUrl { get; set; }
+        public string UserId { get; set; }
     }
 }

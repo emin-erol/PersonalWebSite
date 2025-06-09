@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PersonalWebSite.Dto.ResumeCategoryDtos;
 using PersonalWebSite.Dto.ResumeCategoryItemDtos;
-using PersonalWebSite.Dto.TechIUsedDtos;
+using System.Security.Claims;
 using System.Text;
 
 namespace PersonalWebSite.Areas.Admin.Controllers
@@ -22,8 +22,10 @@ namespace PersonalWebSite.Areas.Admin.Controllers
 		[Route("Index")]
 		public async Task<IActionResult> Index()
 		{
-			var client = _httpClientFactory.CreateClient();
-			var response = await client.GetAsync("https://localhost:7007/api/ResumeCategories");
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
+            var client = _httpClientFactory.CreateClient();
+			var response = await client.GetAsync("https://localhost:7007/api/ResumeCategories/GetResumeCategoriesByUserId/" + userId);
 			if (response.IsSuccessStatusCode)
 			{
 				var jsonData = await response.Content.ReadAsStringAsync();
@@ -46,7 +48,11 @@ namespace PersonalWebSite.Areas.Admin.Controllers
 		[Route("CreateResumeCategoryModal")]
 		public async Task<IActionResult> CreateResumeCategory(CreateResumeCategoryDto dto)
 		{
-			var client = _httpClientFactory.CreateClient();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
+            dto.UserId = userId;
+
+            var client = _httpClientFactory.CreateClient();
 			var jsonData = JsonConvert.SerializeObject(dto);
 			StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
 

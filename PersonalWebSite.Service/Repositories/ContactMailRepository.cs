@@ -49,9 +49,9 @@ namespace PersonalWebSite.Service.Repositories
             }
         }
 
-        public async Task<int> GetNumberOfUnreadMails()
+        public async Task<int> GetNumberOfUnreadMails(string userId)
         {
-            return await _context.ContactMails.Where(mail => mail.IsRead == false).CountAsync();
+            return await _context.ContactMails.Where(mail => mail.IsRead == false).Where(x => x.UserId == userId).CountAsync();
         }
 
         public async Task RemoveBulk(List<int> contactMailIds)
@@ -70,6 +70,13 @@ namespace PersonalWebSite.Service.Repositories
                 _context.ContactMails.RemoveRange(mailsToDelete);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<List<ContactMail>> GetContactMailByUserId(string userId)
+        {
+            var contactMails = await _context.ContactMails.Where(x => x.UserId == userId).ToListAsync();
+
+            return contactMails;
         }
     }
 }

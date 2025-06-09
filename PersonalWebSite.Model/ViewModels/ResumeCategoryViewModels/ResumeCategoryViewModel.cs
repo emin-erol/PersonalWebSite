@@ -12,6 +12,7 @@ namespace PersonalWebSite.Model.ViewModels.ResumeCategoryViewModels
     {
         public int ResumeCategoryId { get; set; }
         public string CategoryName { get; set; }
+        public string UserId { get; set; }
         public List<ResumeCategoryItemViewModel> ResumeCategoryItems { get; set; }
     }
 }

@@ -11,5 +11,6 @@ namespace PersonalWebSite.Service.Interfaces
     public interface IFooterDal : IGenericDal<Footer>
     {
         Task<List<GetFooterWithSocialMediaViewModel>> GetFooterWithSocialMedia();
+        Task<List<GetFooterWithSocialMediaViewModel>> GetFooterWithSocialMediaByUserId(string userId);
     }
 }

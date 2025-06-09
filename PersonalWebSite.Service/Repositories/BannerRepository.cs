@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Math.EC.Rfc7748;
 using PersonalWebSite.DAL.Core;
 using PersonalWebSite.Model.Entities;
 using PersonalWebSite.Model.ViewModels.BannerViewModels;
@@ -56,6 +55,24 @@ namespace PersonalWebSite.Service.Repositories
                 MeetMessage = banner.MeetMessage,
                 StartMessage = banner.StartMessage,
                 Title = banner.Title,
+                SocialMedias = socialMedias
+            }).ToList();
+
+            return result;
+        }
+
+        public async Task<List<GetBannerWithSocialMediaViewModel>> GetBannerWithSocialMediaByUserId(string userId)
+        {
+            var banners = await _context.Banners.Where(x => x.UserId == userId).ToListAsync();
+            var socialMedias = await _context.SocialMedias.Where(x => x.UserId == userId).ToListAsync();
+
+            var result = banners.Select(banner => new GetBannerWithSocialMediaViewModel
+            {
+                BannerId = banner.BannerId,
+                MeetMessage = banner.MeetMessage,
+                StartMessage = banner.StartMessage,
+                Title = banner.Title,
+                UserId = userId,
                 SocialMedias = socialMedias
             }).ToList();
 

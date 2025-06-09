@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PersonalWebSite.Dto.AboutDtos;
 using PersonalWebSite.Dto.SkillDtos;
+using System.Security.Claims;
 using System.Text;
 
 namespace PersonalWebSite.Areas.Admin.Controllers
@@ -21,8 +22,10 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync("https://localhost:7007/api/Abouts/GetAboutWithSkill");
+            var response = await client.GetAsync("https://localhost:7007/api/Abouts/GetAboutWithSkillByUserId/" + userId);
             if (response.IsSuccessStatusCode)
             {
                 var jsonData = await response.Content.ReadAsStringAsync();
@@ -64,6 +67,10 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         [Route("CreateAboutModal")]
         public async Task<IActionResult> CreateAbout(CreateAboutDto dto, IFormFile cvFile, IFormFile ppFile)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
+            dto.UserId = userId;
+
             if (cvFile != null && cvFile.Length > 0 && ppFile != null && ppFile.Length > 0)
             {
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");

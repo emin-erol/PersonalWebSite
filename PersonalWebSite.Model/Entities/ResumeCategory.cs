@@ -11,5 +11,6 @@ namespace PersonalWebSite.Model.Entities
         public int ResumeCategoryId { get; set; }
         public string CategoryName { get; set; }
         public List<ResumeCategoryItem> ResumeCategoryItems { get; set; }
+        public string UserId { get; set; }
     }
 }

@@ -9,5 +9,6 @@ namespace PersonalWebSite.Service.Interfaces
 {
     public interface ISocialMediaDal : IGenericDal<SocialMedia>
     {
+        Task<List<SocialMedia>> GetSocialMediasByUserId(string userId);
     }
 }

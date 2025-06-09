@@ -10,5 +10,6 @@ namespace PersonalWebSite.Service.Interfaces
     public interface ITechIUsedDal : IGenericDal<TechIUsed>
     {
         Task<int> GetTechIUsedIdByTechName(string name);
+        Task<List<TechIUsed>> GetTechIUsedsByUserId(string userId);
     }
 }

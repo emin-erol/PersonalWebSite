@@ -11,10 +11,12 @@ namespace PersonalWebSite.WebApi.Controllers
     {
         private readonly IAboutDal _aboutDal;
         private readonly ISkillDal _skillDal;
-        public AboutsController(IAboutDal aboutDal, ISkillDal skillDal)
+        private readonly IManagementDal _managementDal;
+        public AboutsController(IAboutDal aboutDal, ISkillDal skillDal, IManagementDal managementDal)
         {
             _aboutDal = aboutDal;
             _skillDal = skillDal;
+            _managementDal = managementDal;
         }
 
         [HttpGet]
@@ -31,10 +33,12 @@ namespace PersonalWebSite.WebApi.Controllers
             return Ok(value);
         }
 
-        [HttpGet("GetAboutWithSkill")]
-        public async Task<IActionResult> GetAboutWithSkill()
+        [HttpGet("GetAboutWithSkill/{userName}")]
+        public async Task<IActionResult> GetAboutWithSkill(string userName)
         {
-            var values = await _aboutDal.GetAboutWithSkill();
+            var user = await _managementDal.FindByNameAsync(userName);
+
+            var values = await _aboutDal.GetAboutWithSkill(user.Id);
             return Ok(values);
         }
 
@@ -45,10 +49,17 @@ namespace PersonalWebSite.WebApi.Controllers
             return Ok(values);
         }
 
-        [HttpGet("GetProfileImageLink")]
-        public async Task<IActionResult> GetProfileImageLink()
+        [HttpGet("GetAboutWithSkillByUserId/{userId}")]
+        public async Task<IActionResult> GetAboutWithSkillByUserId(string userId)
         {
-            var value = await _aboutDal.GetProfileImageLink();
+            var values = await _aboutDal.GetAboutWithSkillByUserId(userId);
+            return Ok(values);
+        }
+
+        [HttpGet("GetProfileImageLink/{userId}")]
+        public async Task<IActionResult> GetProfileImageLink(string userId)
+        {
+            var value = await _aboutDal.GetProfileImageLink(userId);
 
             return Ok(value);
         }
@@ -64,7 +75,8 @@ namespace PersonalWebSite.WebApi.Controllers
                 Email = model.Email,
                 CvLink = model.CvLink,
                 Title = model.Title,
-                ProfileImageLink = model.ProfileImageLink
+                ProfileImageLink = model.ProfileImageLink,
+                UserId = model.UserId
             };
             await _aboutDal.CreateAsync(about);
 

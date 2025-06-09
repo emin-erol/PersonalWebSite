@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace PersonalWebSite.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Route("Admin/Setting")]
-    [Authorize]
-    public class SettingController : Controller
+    [Route("Admin/MainPage")]
+    public class MainPageController : Controller
     {
         [Route("Index")]
+        [Authorize]
         public IActionResult Index()
         {
             return View();

@@ -52,18 +52,26 @@ namespace PersonalWebSite.WebApi.Controllers
             return Ok(values);
         }
 
+        [HttpGet("GetResumeCategoryItemsWithTechIUsedByUserId/{userId}")]
+        public async Task<IActionResult> GetResumeCategoryItemsWithTechIUsedByUserId(string userId)
+        {
+            var values = await _resumeCategoryItemDal.GetResumeCategoryItemsWithTechIUsedByUserId(userId);
+
+            return Ok(values);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateResumeCategoryItem(CreateResumeCategoryItemViewModel model)
         {
             var resumeCategoryItem = new ResumeCategoryItem
             {
                 Description = model.Description,
-                EndDate = DateTime.Now,
+                EndDate = model.EndDate,
                 Header = model.Header,
                 IconUrl = model.IconUrl,
-                StartDate = DateTime.Now,
+                StartDate = model.StartDate,
                 Title = model.Title,
-                ResumeCategoryId = model.ResumeCategoryId
+                ResumeCategoryId = model.ResumeCategoryId,
             };
             await _resumeCategoryItemDal.CreateAsync(resumeCategoryItem);
 
@@ -75,7 +83,7 @@ namespace PersonalWebSite.WebApi.Controllers
                 IconUrl = resumeCategoryItem.IconUrl,
                 StartDate = resumeCategoryItem.StartDate,
                 EndDate = resumeCategoryItem.EndDate,
-                Title = resumeCategoryItem.Title
+                Title = resumeCategoryItem.Title,
             };
 
             return Ok(createdItem);
@@ -88,12 +96,12 @@ namespace PersonalWebSite.WebApi.Controllers
             {
                 ResumeCategoryItemId = model.ResumeCategoryItemId,
                 Description = model.Description,
-                EndDate = DateTime.Now,
+                EndDate = model.EndDate,
                 Header = model.Header,
                 IconUrl = model.IconUrl,
-                StartDate = DateTime.Now,
+                StartDate = model.StartDate,
                 Title = model.Title,
-                ResumeCategoryId = model.ResumeCategoryId
+                ResumeCategoryId = model.ResumeCategoryId,
             };
             await _resumeCategoryItemDal.UpdateAsync(resumeCategoryItem);
             return Ok("Resume Category Item information has been updated.");

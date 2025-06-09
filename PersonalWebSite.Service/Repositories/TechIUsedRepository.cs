@@ -52,5 +52,12 @@ namespace PersonalWebSite.Service.Repositories
 
             return result;
         }
+
+        public async Task<List<TechIUsed>> GetTechIUsedsByUserId(string userId)
+        {
+            var techIUseds = await _context.TechsIUsed.Where(t => t.UserId == userId).ToListAsync();
+
+            return techIUseds;
+        }
     }
 }

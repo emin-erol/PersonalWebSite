@@ -10,6 +10,7 @@ namespace PersonalWebSite.Service.Interfaces
 {
     public interface IResumeCategoryDal : IGenericDal<ResumeCategory>
     {
-        Task<List<ResumeCategoryViewModel>> GetAllResumeContent();
+        Task<List<ResumeCategoryViewModel>> GetAllResumeContent(string userId);
+        Task<List<ResumeCategoryViewModel>> GetResumeCategoriesByUserId(string userId);
     }
 }

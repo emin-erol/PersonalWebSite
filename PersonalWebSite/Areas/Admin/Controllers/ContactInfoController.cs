@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PersonalWebSite.Dto.ContactInfoDtos;
+using System.Security.Claims;
 using System.Text;
 
 namespace PersonalWebSite.Areas.Admin.Controllers
@@ -20,8 +21,10 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         [Route("Index")]
         public async Task<IActionResult> Index()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync("https://localhost:7007/api/ContactInfos");
+            var response = await client.GetAsync("https://localhost:7007/api/ContactInfos/GetContactInfosByUserId/" + userId);
             if (response.IsSuccessStatusCode)
             {
                 var jsonData = await response.Content.ReadAsStringAsync();
@@ -35,7 +38,7 @@ namespace PersonalWebSite.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("CreateContactInfoModal")]
-        public async Task<IActionResult> CreateContactInfoModal()
+        public IActionResult CreateContactInfoModal()
         {
             return View();
         }
@@ -44,6 +47,10 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         [Route("CreateContactInfoModal")]
         public async Task<IActionResult> CreateContactInfo(CreateContactInfoDto dto)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
+            dto.UserId = userId;
+
             var client = _httpClientFactory.CreateClient();
             var jsonData = JsonConvert.SerializeObject(dto);
             StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");

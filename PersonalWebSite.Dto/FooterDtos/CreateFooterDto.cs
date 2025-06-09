@@ -9,5 +9,6 @@ namespace PersonalWebSite.Dto.FooterDtos
     public class CreateFooterDto
     {
         public string? Description { get; set; }
+        public string? UserId { get; set; }
     }
 }

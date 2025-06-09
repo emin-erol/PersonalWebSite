@@ -11,9 +11,11 @@ namespace PersonalWebSite.WebApi.Controllers
     public class ContactInfosController : ControllerBase
     {
         private readonly IContactInfoDal _contactInfoDal;
-        public ContactInfosController(IContactInfoDal contactInfoDal)
+        private readonly IManagementDal _managementDal;
+        public ContactInfosController(IContactInfoDal contactInfoDal, IManagementDal managementDal)
         {
             _contactInfoDal = contactInfoDal;
+            _managementDal = managementDal;
         }
 
         [HttpGet]
@@ -30,6 +32,22 @@ namespace PersonalWebSite.WebApi.Controllers
             return Ok(value);
         }
 
+        [HttpGet("GetContactInfosByUserId/{userId}")]
+        public async Task<IActionResult> GetContactInfosByUserId(string userId)
+        {
+            var values = await _contactInfoDal.GetContactInfosByUserId(userId);
+            return Ok(values);
+        }
+
+        [HttpGet("GetContactInfosByUserName/{userName}")]
+        public async Task<IActionResult> GetContactInfosByUserName(string userName)
+        {
+            var user = await _managementDal.FindByNameAsync(userName);
+
+            var values = await _contactInfoDal.GetContactInfosByUserId(user.Id);
+            return Ok(values);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateContactInfo(CreateContactInfoViewModel model)
         {
@@ -37,7 +55,8 @@ namespace PersonalWebSite.WebApi.Controllers
             {
                 Description = model.Description,
                 IconUrl = model.IconUrl,
-                Title = model.Title
+                Title = model.Title,
+                UserId = model.UserId
             };
             await _contactInfoDal.CreateAsync(contactInfo);
             return Ok("Contact Info information has been created.");
@@ -51,7 +70,7 @@ namespace PersonalWebSite.WebApi.Controllers
                 ContactInfoId = model.ContactInfoId,
                 Description = model.Description,
                 IconUrl = model.IconUrl,
-                Title = model.Title
+                Title = model.Title,
             };
             await _contactInfoDal.UpdateAsync(contactInfo);
             return Ok("Contact Info information has been updated.");

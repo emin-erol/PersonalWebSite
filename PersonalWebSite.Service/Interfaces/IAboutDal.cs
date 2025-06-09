@@ -10,8 +10,9 @@ namespace PersonalWebSite.Service.Interfaces
 {
     public interface IAboutDal : IGenericDal<About>
     {
-        Task<List<GetAboutWithSkillViewModel>> GetAboutWithSkill();
+        Task<List<GetAboutWithSkillViewModel>> GetAboutWithSkill(string userId);
         Task<GetAboutWithSkillViewModel> GetAboutWithSkillByAboutId(int id);
-        Task<string> GetProfileImageLink();
+        Task<string> GetProfileImageLink(string userId);
+        Task<List<GetAboutWithSkillViewModel>> GetAboutWithSkillByUserId(string userId);
     }
 }

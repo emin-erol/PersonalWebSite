@@ -12,5 +12,6 @@ namespace PersonalWebSite.Model.Entities
         public string? StartMessage { get; set; }
         public string? MeetMessage { get; set; }
         public string? Title { get; set; }
+        public string UserId { get; set; }
     }
 }

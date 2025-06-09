@@ -11,5 +11,6 @@ namespace PersonalWebSite.Service.Interfaces
     public interface IBannerDal : IGenericDal<Banner>
     {
         Task<List<GetBannerWithSocialMediaViewModel>> GetBannerWithSocialMedia();
+        Task<List<GetBannerWithSocialMediaViewModel>> GetBannerWithSocialMediaByUserId(string userId);
     }
 }

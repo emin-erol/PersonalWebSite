@@ -46,9 +46,10 @@ namespace PersonalWebSite.Service.Repositories
             await base.UpdateAsync(entity);
         }
 
-        public async Task<List<ResumeCategoryViewModel>> GetAllResumeContent()
+        public async Task<List<ResumeCategoryViewModel>> GetAllResumeContent(string userId)
         {
             var result = await _context.ResumeCategories
+                .Where(x => x.UserId == userId)
                 .Include(rc => rc.ResumeCategoryItems)
                 .ThenInclude(rci => rci.ItemTeches)
                 .Select(rc => new ResumeCategoryViewModel
@@ -77,5 +78,18 @@ namespace PersonalWebSite.Service.Repositories
             return result;
         }
 
+        public async Task<List<ResumeCategoryViewModel>> GetResumeCategoriesByUserId(string userId)
+        {
+            var resumeCategories = await _context.ResumeCategories
+                .Where(x => x.UserId == userId)
+                .Select(rc => new ResumeCategoryViewModel
+                {
+                    ResumeCategoryId = rc.ResumeCategoryId,
+                    CategoryName = rc.CategoryName,
+                    UserId = userId,
+                }).ToListAsync();
+
+            return resumeCategories;
+        }
     }
 }

@@ -13,5 +13,6 @@ namespace PersonalWebSite.Service.Interfaces
         Task<List<ResumeCategoryItemsWithTechIUsedViewModel>> GetResumeCategoryItemsWithTechIUsed();
         Task<ResumeCategoryItemsWithTechIUsedViewModel> GetResumeCategoryItemWithTechIUsedByResumeCategoryItemId(int id);
         Task<List<ResumeCategoryItemViewModel>> GetResumeCategoryItemsByResumeCategoryId(int resumeCategoryId);
+        Task<List<ResumeCategoryItemsWithTechIUsedViewModel>> GetResumeCategoryItemsWithTechIUsedByUserId(string userId);
     }
 }

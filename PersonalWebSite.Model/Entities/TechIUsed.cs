@@ -10,6 +10,7 @@ namespace PersonalWebSite.Model.Entities
     {
         public int TechIUsedId { get; set; }
         public string Name { get; set; }
+        public string UserId { get; set; }
         public ICollection<ItemTech> ItemTeches { get; set; }
     }
 }

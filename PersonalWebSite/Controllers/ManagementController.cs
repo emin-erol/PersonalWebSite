@@ -63,24 +63,33 @@ namespace PersonalWebSite.Controllers
 
             if (response.IsSuccessStatusCode)
             {
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var loginResult = JsonConvert.DeserializeObject<UserLoginResponseDto>(jsonResponse);
+                var user = loginResult?.User;
+
+                if (user == null)
+                    return BadRequest("Kullanıcı bilgisi alınamadı.");
+
                 var responseConfirm = await client.GetAsync("https://localhost:7007/api/Managements/CheckEmailConfirmed/" + request.Email);
                 if (responseConfirm.IsSuccessStatusCode)
                 {
                     var jsonConfirm = await responseConfirm.Content.ReadAsStringAsync();
                     var check = JsonConvert.DeserializeObject<bool>(jsonConfirm);
 
-                    if(check == true)
+                    if (check)
                     {
                         var claims = new List<Claim>
                         {
-                            new Claim(ClaimTypes.Name, request.Email)
+                            new Claim(ClaimTypes.NameIdentifier, user.Id),
+                            new Claim(ClaimTypes.Name, user.UserName),
+                            new Claim(ClaimTypes.Email, user.Email)
                         };
 
                         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         var principal = new ClaimsPrincipal(identity);
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-                        return Json(new { success = true, redirectUrl = Url.Action("Index", "Banner", new { area = "Admin" }) });
+                        return Json(new { success = true, redirectUrl = Url.Action("Index", "MainPage", new { area = "Admin" }) });
                     }
                     else
                     {

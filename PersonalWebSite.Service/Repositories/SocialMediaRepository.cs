@@ -11,8 +11,10 @@ namespace PersonalWebSite.Service.Repositories
 {
     public class SocialMediaRepository : GenericRepository<SocialMedia>, ISocialMediaDal
     {
+        private readonly PersonalWebSiteDbContext _context;
         public SocialMediaRepository(PersonalWebSiteDbContext context) : base(context)
         {
+            _context = context;
         }
 
         public async Task CreateAsync(SocialMedia entity)
@@ -38,6 +40,13 @@ namespace PersonalWebSite.Service.Repositories
         public async Task UpdateAsync(SocialMedia entity)
         {
             await base.UpdateAsync(entity);
+        }
+
+        public async Task<List<SocialMedia>> GetSocialMediasByUserId(string userId)
+        {
+            var socialMedias = _context.SocialMedias.Where(x => x.UserId == userId).ToList();
+
+            return socialMedias;
         }
     }
 }

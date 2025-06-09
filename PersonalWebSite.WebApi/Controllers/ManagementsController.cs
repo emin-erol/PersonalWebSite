@@ -89,7 +89,16 @@ namespace PersonalWebSite.WebApi.Controllers
                 if (model.Item1)
                 {
                     await _signInManager.SignInAsync(model.Item2, isPersistent: false);
-                    return Ok("Giriş işlemi başarılı.");
+                    return Ok(new
+                    {
+                        message = "Giriş başarılı.",
+                        user = new
+                        {
+                            id = model.Item2.Id,
+                            email = model.Item2.Email,
+                            userName = model.Item2.UserName
+                        }
+                    });
                 }
                 else
                 {

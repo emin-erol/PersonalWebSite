@@ -9,5 +9,6 @@ namespace PersonalWebSite.Service.Interfaces
 {
     public interface IContactInfoDal : IGenericDal<ContactInfo>
     {
+        Task<List<ContactInfo>> GetContactInfosByUserId(string userId);
     }
 }

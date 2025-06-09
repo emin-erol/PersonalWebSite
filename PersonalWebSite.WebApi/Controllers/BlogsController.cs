@@ -11,10 +11,12 @@ namespace PersonalWebSite.WebApi.Controllers
     public class BlogsController : ControllerBase
     {
         private readonly IBlogDal _blogDal;
+        private readonly IManagementDal _managementDal;
 
-        public BlogsController(IBlogDal blogDal)
+        public BlogsController(IBlogDal blogDal, IManagementDal managementDal)
         {
             _blogDal = blogDal;
+            _managementDal = managementDal;
         }
 
         [HttpGet]
@@ -31,6 +33,23 @@ namespace PersonalWebSite.WebApi.Controllers
             return Ok(value);
         }
 
+        [HttpGet("GetBlogsByUserId/{userId}")]
+        public async Task<IActionResult> GetBlogsByUserId(string userId)
+        {
+            var values = await _blogDal.GetBlogsByUserId(userId);
+            return Ok(values);
+        }
+
+        [HttpGet("GetAllBlogsByUserName/{userName}")]
+        public async Task<IActionResult> GetAllBlogsByUserName(string userName)
+        {
+            var user = await _managementDal.FindByNameAsync(userName);
+
+            var values = await _blogDal.GetBlogsByUserId(user.Id);
+
+            return Ok(values);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateBlog(CreateBlogViewModel model)
         {
@@ -39,7 +58,8 @@ namespace PersonalWebSite.WebApi.Controllers
                 Content = model.Content,
                 CreatedDate = DateTime.Now,
                 Title = model.Title,
-                CoverImageUrl = model.CoverImageUrl
+                CoverImageUrl = model.CoverImageUrl,
+                UserId = model.UserId
             };
 
             await _blogDal.CreateAsync(blog);
@@ -55,7 +75,7 @@ namespace PersonalWebSite.WebApi.Controllers
                 Content = model.Content,
                 CreatedDate = DateTime.Now,
                 Title = model.Title,
-                CoverImageUrl = model.CoverImageUrl
+                CoverImageUrl = model.CoverImageUrl,
             };
 
             await _blogDal.UpdateAsync(blog);

@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using MimeKit;
 using Newtonsoft.Json;
 using PersonalWebSite.Dto.ContactMailDtos;
+using PersonalWebSite.Dto.ManagementDtos;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace PersonalWebSite.Controllers
 {
@@ -15,10 +17,30 @@ namespace PersonalWebSite.Controllers
             _httpClientFactory = httpClientFactory;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string? username)
         {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                var client = _httpClientFactory.CreateClient();
+                var response = await client.GetAsync("https://localhost:7007/api/Managements/GetAllUsers/");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var users = await response.Content.ReadFromJsonAsync<List<UserDto>>();
+                    var defaultUser = users?.FirstOrDefault();
+
+                    if (defaultUser != null)
+                    {
+                        return RedirectToAction("Index", "Default", new { username = defaultUser.UserName });
+                    }
+                }
+
+                return NotFound("Kullanıcı bulunamadı.");
+            }
+
             return View();
         }
+
 
         [HttpPost]
         public async Task<IActionResult> SendEmail(CreateContactMailDto dto)

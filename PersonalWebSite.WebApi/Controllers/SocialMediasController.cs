@@ -30,6 +30,13 @@ namespace PersonalWebSite.WebApi.Controllers
             return Ok(value);
         }
 
+        [HttpGet("GetSocialMediasByUserId/{userId}")]
+        public async Task<IActionResult> GetSocialMediasByUserId(string userId)
+        {
+            var values = await _socialMediaDal.GetSocialMediasByUserId(userId);
+            return Ok(values);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateSocialMedia(CreateSocialMediaViewModel model)
         {
@@ -37,7 +44,8 @@ namespace PersonalWebSite.WebApi.Controllers
             {
                 Name = model.Name,
                 IconUrl = model.IconUrl,
-                SocialMediaUrl = model.SocialMediaUrl
+                SocialMediaUrl = model.SocialMediaUrl,
+                UserId = model.UserId!
             };
 
             await _socialMediaDal.CreateAsync(socialMedia);
@@ -52,7 +60,7 @@ namespace PersonalWebSite.WebApi.Controllers
                 SocialMediaId = model.SocialMediaId,
                 Name = model.Name,
                 IconUrl = model.IconUrl,
-                SocialMediaUrl = model.SocialMediaUrl
+                SocialMediaUrl = model.SocialMediaUrl,
             };
 
             await _socialMediaDal.UpdateAsync(socialMedia);

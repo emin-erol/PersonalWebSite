@@ -8,15 +8,24 @@ namespace PersonalWebSite.ViewComponents.DefaultViewComponents
     public class _ContactInfoComponentPartial : ViewComponent
     {
         private readonly IHttpClientFactory _httpClientFactory;
-		public _ContactInfoComponentPartial(IHttpClientFactory httpClientFactory)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+		public _ContactInfoComponentPartial(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
 		{
 			_httpClientFactory = httpClientFactory;
+            _httpContextAccessor = httpContextAccessor;
 		}
 
 		public async Task<IViewComponentResult> InvokeAsync()
         {
+            var userName = _httpContextAccessor.HttpContext?.Request.RouteValues["username"]?.ToString();
+
+            if (String.IsNullOrEmpty(userName))
+            {
+                return View();
+            } 
+
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync("https://localhost:7007/api/ContactInfos");
+            var response = await client.GetAsync("https://localhost:7007/api/ContactInfos/GetContactInfosByUserName/" + userName);
             if (response.IsSuccessStatusCode)
             {
                 var jsonData = await response.Content.ReadAsStringAsync();

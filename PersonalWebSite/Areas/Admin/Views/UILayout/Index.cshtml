@@ -5,25 +5,25 @@
 <!DOCTYPE html>
 <html lang="en">
 
-@await Html.PartialAsync("/Areas/Admin/Views/UILayout/HeaderPartial.cshtml")
+@await Component.InvokeAsync("AdminHeaderUILayout")
 
 <body>
     <div id="layout-wrapper">
 
-        @await Html.PartialAsync("/Areas/Admin/Views/UILayout/NavbarPartial.cshtml")
+        @await Component.InvokeAsync("AdminNavbarUILayout")
 
-        @await Html.PartialAsync("/Areas/Admin/Views/UILayout/SideBarPartial.cshtml")
+        @await Component.InvokeAsync("AdminSideBarUILayout")
 
         <div class="main-content">
 
             @RenderBody()
 
-            @await Html.PartialAsync("/Areas/Admin/Views/UILayout/FooterPartial.cshtml")
+            @await Component.InvokeAsync("AdminFooterUILayout")
 
         </div>
     </div>
 
-    @await Html.PartialAsync("/Areas/Admin/Views/UILayout/ScriptPartial.cshtml")
+    @await Component.InvokeAsync("AdminScriptUILayout")
 
 </body>
 </html>

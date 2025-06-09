@@ -9,5 +9,6 @@ namespace PersonalWebSite.Service.Interfaces
 {
     public interface IBlogDal : IGenericDal<Blog>
     {
+        Task<List<Blog>> GetBlogsByUserId(string userId);
     }
 }

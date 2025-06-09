@@ -11,9 +11,11 @@ namespace PersonalWebSite.WebApi.Controllers
     public class ResumeCategoriesController : ControllerBase
     {
         private readonly IResumeCategoryDal _resumeCategoryDal;
-        public ResumeCategoriesController(IResumeCategoryDal resumeCategoryDal)
+        private readonly IManagementDal _managementDal;
+        public ResumeCategoriesController(IResumeCategoryDal resumeCategoryDal, IManagementDal managementDal)
         {
             _resumeCategoryDal = resumeCategoryDal;
+            _managementDal = managementDal;
         }
 
         [HttpGet]
@@ -30,10 +32,19 @@ namespace PersonalWebSite.WebApi.Controllers
             return Ok(value);
         }
 
-        [HttpGet("GetAllResumeContent")]
-        public async Task<IActionResult> GetAllResumeContent()
+        [HttpGet("GetAllResumeContent/{userName}")]
+        public async Task<IActionResult> GetAllResumeContent(string userName)
         {
-            var values = await _resumeCategoryDal.GetAllResumeContent();
+            var user = await _managementDal.FindByNameAsync(userName);
+
+            var values = await _resumeCategoryDal.GetAllResumeContent(user.Id);
+            return Ok(values);
+        }
+
+        [HttpGet("GetResumeCategoriesByUserId/{userId}")]
+        public async Task<IActionResult> GetResumeCategoriesByUserId(string userId)
+        {
+            var values = await _resumeCategoryDal.GetResumeCategoriesByUserId(userId);
             return Ok(values);
         }
 
@@ -42,7 +53,8 @@ namespace PersonalWebSite.WebApi.Controllers
         {
             var resumeCategory = new ResumeCategory
             {
-                CategoryName = model.CategoryName
+                CategoryName = model.CategoryName,
+                UserId = model.UserId
             };
             await _resumeCategoryDal.CreateAsync(resumeCategory);
             return Ok("Resume Category information has been created.");
@@ -54,7 +66,7 @@ namespace PersonalWebSite.WebApi.Controllers
             var resumeCategory = new ResumeCategory
             {
                 CategoryName = model.CategoryName,
-                ResumeCategoryId = model.ResumeCategoryId
+                ResumeCategoryId = model.ResumeCategoryId,
             };
             await _resumeCategoryDal.UpdateAsync(resumeCategory);
             return Ok("Resume Category information has been updated.");

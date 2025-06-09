@@ -11,6 +11,7 @@ namespace PersonalWebSite.Model.ViewModels.FooterViewModels
 	{
         public int FooterId { get; set; }
         public string? Description { get; set; }
+        public string UserId { get; set; }
         public List<SocialMedia> SocialMedias { get; set; }
     }
 }

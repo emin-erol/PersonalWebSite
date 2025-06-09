@@ -10,30 +10,5 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         {
             return View();
         }
-
-        public PartialViewResult HeaderPartial()
-        {
-            return PartialView();
-        }
-
-        public PartialViewResult NavbarPartial()
-        {
-            return PartialView();
-        }
-
-        public PartialViewResult SideBarPartial()
-        {
-            return PartialView();
-        }
-
-        public PartialViewResult FooterPartial()
-        {
-            return PartialView();
-        }
-
-        public PartialViewResult ScriptPartial()
-        {
-            return PartialView();
-        }
     }
 }

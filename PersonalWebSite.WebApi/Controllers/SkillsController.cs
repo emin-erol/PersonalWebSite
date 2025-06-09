@@ -36,7 +36,7 @@ namespace PersonalWebSite.WebApi.Controllers
             var skill = new Skill
             {
                 AboutId = model.AboutId,
-                SkillName = model.SkillName
+                SkillName = model.SkillName,
             };
             await _skillDal.CreateAsync(skill);
             return Ok("Skill information has been created.");
@@ -49,7 +49,7 @@ namespace PersonalWebSite.WebApi.Controllers
             {
                 SkillId = model.SkillId,
                 AboutId = model.AboutId,
-                SkillName = model.SkillName
+                SkillName = model.SkillName,
             };
             await _skillDal.UpdateAsync(skill);
             return Ok("Skill information has been updated.");

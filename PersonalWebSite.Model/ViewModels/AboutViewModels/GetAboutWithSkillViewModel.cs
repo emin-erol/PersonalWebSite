@@ -17,6 +17,7 @@ namespace PersonalWebSite.Model.ViewModels.AboutViewModels
         public string? Title { get; set; }
         public string? Email { get; set; }
         public string? CvLink { get; set; }
+        public string UserId { get; set; }
         public string? ProfileImageLink { get; set; }
         public List<SkillViewModel> Skills { get; set; }
     }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PersonalWebSite.Dto.BlogDtos;
+using System.Security.Claims;
 using System.Text;
 
 namespace PersonalWebSite.Areas.Admin.Controllers
@@ -21,8 +22,10 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         [Route("Index")]
         public async Task<IActionResult> Index()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync("https://localhost:7007/api/Blogs");
+            var response = await client.GetAsync("https://localhost:7007/api/Blogs/GetBlogsByUserId/" + userId);
 
             if(response.IsSuccessStatusCode)
             {
@@ -46,6 +49,10 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         [Route("CreateBlogModal")]
         public async Task<IActionResult> CreateBlog(CreateBlogDto dto)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
+            dto.UserId = userId;
+
             var client = _httpClientFactory.CreateClient();
 
             var jsonData = JsonConvert.SerializeObject(dto);

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using PersonalWebSite.Model.Entities;
 using PersonalWebSite.Model.ViewModels.ContactMailViewModels;
 using PersonalWebSite.Service.Interfaces;
-using PersonalWebSite.Service.Repositories;
 
 namespace PersonalWebSite.WebApi.Controllers
 {
@@ -31,11 +30,19 @@ namespace PersonalWebSite.WebApi.Controllers
             return Ok(value);
         }
 
-        [HttpGet("GetNumberOfUnreadMails")]
-        public async Task<IActionResult> GetNumberOfUnreadMails()
+        [HttpGet("GetNumberOfUnreadMails/{userId}")]
+        public async Task<IActionResult> GetNumberOfUnreadMails(string userId)
         {
-            var value = await _contactMailDal.GetNumberOfUnreadMails();
+            var value = await _contactMailDal.GetNumberOfUnreadMails(userId);
             return Ok(value);
+        }
+
+        [HttpGet("GetContactMailsByUserId/{userId}")]
+        public async Task<IActionResult> GetContactMailsByUserId(string userId)
+        {
+            var values = await _contactMailDal.GetContactMailByUserId(userId);
+
+            return Ok(values);
         }
 
         [HttpPost]
@@ -49,6 +56,7 @@ namespace PersonalWebSite.WebApi.Controllers
                 Subject = model.Subject,
                 IsRead = false,
                 ShippingDate = model.ShippingDate,
+                UserId = model.UserId!
             };
 
             await _contactMailDal.CreateAsync(contactMail);

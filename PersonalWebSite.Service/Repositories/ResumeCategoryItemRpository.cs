@@ -133,5 +133,41 @@ namespace PersonalWebSite.Service.Repositories
 
             return values;
         }
+
+        public async Task<List<ResumeCategoryItemsWithTechIUsedViewModel>> GetResumeCategoryItemsWithTechIUsedByUserId(string userId)
+        {
+            var result = await (from rci in _context.ResumeCategoryItems
+                                join rc in _context.ResumeCategories on rci.ResumeCategoryId equals rc.ResumeCategoryId
+                                join it in _context.ItemTeches on rci.ResumeCategoryItemId equals it.ResumeCategoryItemId
+                                join ti in _context.TechsIUsed on it.TechIUsedId equals ti.TechIUsedId
+                                where rc.UserId == userId
+                                group ti by new
+                                {
+                                    rci.ResumeCategoryItemId,
+                                    rci.Title,
+                                    rci.StartDate,
+                                    rci.EndDate,
+                                    rci.IconUrl,
+                                    rci.Header,
+                                    rci.Description,
+                                    rc.ResumeCategoryId,
+                                    rc.CategoryName
+                                } into g
+                                select new ResumeCategoryItemsWithTechIUsedViewModel
+                                {
+                                    ResumeCategoryItemId = g.Key.ResumeCategoryItemId,
+                                    Title = g.Key.Title,
+                                    StartDate = g.Key.StartDate,
+                                    EndDate = g.Key.EndDate,
+                                    IconUrl = g.Key.IconUrl,
+                                    Header = g.Key.Header,
+                                    Description = g.Key.Description,
+                                    ResumeCategoryId = g.Key.ResumeCategoryId,
+                                    ResumeCategoryName = g.Key.CategoryName,
+                                    TechNames = g.Select(x => x.Name).ToList()
+                                }).ToListAsync();
+
+            return result;
+        }
     }
 }

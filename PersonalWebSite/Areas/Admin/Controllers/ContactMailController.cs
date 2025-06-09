@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PersonalWebSite.Dto.ContactMailDtos;
+using System.Security.Claims;
 using System.Text;
 
 namespace PersonalWebSite.Areas.Admin.Controllers
@@ -20,8 +21,10 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         [Route("Index")]
         public async Task<IActionResult> Index()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync("https://localhost:7007/api/ContactMails");
+            var response = await client.GetAsync("https://localhost:7007/api/ContactMails/GetContactMailsByUserId/" + userId);
 
             if (response.IsSuccessStatusCode)
             {
@@ -39,8 +42,10 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         [Route("GetNumberOfUnreadMails")]
         public async Task<int> GetNumberOfUnreadMails()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync("https://localhost:7007/api/ContactMails/GetNumberOfUnreadMails");
+            var response = await client.GetAsync("https://localhost:7007/api/ContactMails/GetNumberOfUnreadMails/" + userId);
             if (response.IsSuccessStatusCode)
             {
                 var jsonData = await response.Content.ReadAsStringAsync();

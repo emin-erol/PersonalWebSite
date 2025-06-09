@@ -11,9 +11,11 @@ namespace PersonalWebSite.WebApi.Controllers
     public class BannersController : ControllerBase
     {
         private readonly IBannerDal _bannerDal;
-        public BannersController(IBannerDal bannerDal)
+        private readonly IManagementDal _managementDal;
+        public BannersController(IBannerDal bannerDal, IManagementDal managementDal)
         {
             _bannerDal = bannerDal;
+            _managementDal = managementDal;
         }
 
         [HttpGet]
@@ -37,6 +39,22 @@ namespace PersonalWebSite.WebApi.Controllers
             return Ok(values);
         }
 
+        [HttpGet("GetBannerWithSocialMediaByUserId/{userId}")]
+        public async Task<IActionResult> GetBannerWithSocialMediaByUserId(string userId)
+        {
+            var values = await _bannerDal.GetBannerWithSocialMediaByUserId(userId);
+            return Ok(values);
+        }
+
+        [HttpGet("GetBannerWithSocialMediaByUserName/{userName}")]
+        public async Task<IActionResult> GetBannerWithSocialMediaByUserName(string userName)
+        {
+            var user = await _managementDal.FindByNameAsync(userName);
+
+            var values = await _bannerDal.GetBannerWithSocialMediaByUserId(user.Id);
+            return Ok(values);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateBanner(CreateBannerViewModel model)
         {
@@ -44,7 +62,8 @@ namespace PersonalWebSite.WebApi.Controllers
             {
                 StartMessage = model.StartMessage,
                 MeetMessage = model.MeetMessage,
-                Title = model.Title
+                Title = model.Title,
+                UserId = model.UserId
             };
 
             await _bannerDal.CreateAsync(banner);
@@ -59,7 +78,7 @@ namespace PersonalWebSite.WebApi.Controllers
                 BannerId = model.BannerId,
                 StartMessage = model.StartMessage,
                 MeetMessage = model.MeetMessage,
-                Title = model.Title
+                Title = model.Title,
             };
             await _bannerDal.UpdateAsync(banner);
             return Ok("Banner information has been updated.");

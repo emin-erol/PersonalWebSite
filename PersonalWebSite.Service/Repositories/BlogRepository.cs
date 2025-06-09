@@ -1,4 +1,5 @@
-﻿using PersonalWebSite.DAL.Core;
+﻿using Microsoft.EntityFrameworkCore;
+using PersonalWebSite.DAL.Core;
 using PersonalWebSite.Model.Entities;
 using PersonalWebSite.Service.Interfaces;
 using System;
@@ -11,8 +12,10 @@ namespace PersonalWebSite.Service.Repositories
 {
     public class BlogRepository : GenericRepository<Blog>, IBlogDal
     {
+        private readonly PersonalWebSiteDbContext _context;
         public BlogRepository(PersonalWebSiteDbContext context) : base(context)
         {
+            _context = context;
         }
 
         public async Task CreateAsync(Blog entity)
@@ -38,6 +41,13 @@ namespace PersonalWebSite.Service.Repositories
         public async Task UpdateAsync(Blog entity)
         {
             await base.UpdateAsync(entity);
+        }
+
+        public async Task<List<Blog>> GetBlogsByUserId(string userId)
+        {
+            var blogs = await _context.Blogs.Where(x => x.UserId == userId).ToListAsync();
+
+            return blogs;
         }
     }
 }

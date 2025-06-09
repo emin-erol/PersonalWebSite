@@ -7,15 +7,24 @@ namespace PersonalWebSite.ViewComponents.DefaultViewComponents
     public class _AboutMeComponentPartial : ViewComponent
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        public _AboutMeComponentPartial(IHttpClientFactory httpClientFactory)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public _AboutMeComponentPartial(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
         {
             _httpClientFactory = httpClientFactory;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
+            var username = _httpContextAccessor.HttpContext?.Request.RouteValues["username"]?.ToString();
+
+            if (string.IsNullOrEmpty(username))
+            {
+                return View();
+            }
+
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync("https://localhost:7007/api/Abouts/GetAboutWithSkill");
+            var response = await client.GetAsync($"https://localhost:7007/api/Abouts/GetAboutWithSkill/{username}");
             if (response.IsSuccessStatusCode)
             {
                 var jsonData = await response.Content.ReadAsStringAsync();

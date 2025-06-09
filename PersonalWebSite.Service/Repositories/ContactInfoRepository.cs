@@ -1,4 +1,5 @@
-﻿using PersonalWebSite.DAL.Core;
+﻿using Microsoft.EntityFrameworkCore;
+using PersonalWebSite.DAL.Core;
 using PersonalWebSite.Model.Entities;
 using PersonalWebSite.Service.Interfaces;
 using System;
@@ -11,8 +12,10 @@ namespace PersonalWebSite.Service.Repositories
 {
     public class ContactInfoRepository : GenericRepository<ContactInfo>, IContactInfoDal
     {
+        private readonly PersonalWebSiteDbContext _context;
         public ContactInfoRepository(PersonalWebSiteDbContext context) : base(context)
         {
+            _context = context;
         }
 
         public async Task CreateAsync(ContactInfo entity)
@@ -38,6 +41,13 @@ namespace PersonalWebSite.Service.Repositories
         public async Task UpdateAsync(ContactInfo entity)
         {
             await base.UpdateAsync(entity);
+        }
+
+        public async Task<List<ContactInfo>> GetContactInfosByUserId(string userId)
+        {
+            var contactInfos = await _context.ContactInfos.Where(x => x.UserId == userId).ToListAsync();
+
+            return contactInfos;
         }
     }
 }

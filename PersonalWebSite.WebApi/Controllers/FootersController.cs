@@ -10,9 +10,11 @@ namespace PersonalWebSite.WebApi.Controllers
     public class FootersController : ControllerBase
     {
         private readonly IFooterDal _footerDal;
-        public FootersController(IFooterDal footerDal)
+        private readonly IManagementDal _managementDal;
+        public FootersController(IFooterDal footerDal, IManagementDal managementDal)
         {
             _footerDal = footerDal;
+            _managementDal = managementDal;
         }
 
         [HttpGet]
@@ -36,12 +38,29 @@ namespace PersonalWebSite.WebApi.Controllers
 			return Ok(values);
 		}
 
-		[HttpPost]
+        [HttpGet("GetFooterWithSocialMediaByUserId/{userId}")]
+        public async Task<IActionResult> GetFooterWithSocialMediaByUserId(string userId)
+        {
+            var values = await _footerDal.GetFooterWithSocialMediaByUserId(userId);
+            return Ok(values);
+        }
+
+        [HttpGet("GetFooterWithSocialMediaByUserName/{userName}")]
+        public async Task<IActionResult> GetFooterWithSocialMediaByUserName(string userName)
+        {
+            var user = await _managementDal.FindByNameAsync(userName);
+
+            var values = await _footerDal.GetFooterWithSocialMediaByUserId(user.Id);
+            return Ok(values);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> CreateFooter(CreateFooterViewModel model)
         {
             var footer = new Footer
             {
-                Description = model.Description
+                Description = model.Description,
+                UserId = model.UserId
             };
             await _footerDal.CreateAsync(footer);
             return Ok("Footer information has been created.");
@@ -53,7 +72,7 @@ namespace PersonalWebSite.WebApi.Controllers
             var footer = new Footer
             {
                 FooterId = model.FooterId,
-                Description = model.Description
+                Description = model.Description,
             };
             await _footerDal.UpdateAsync(footer);
             return Ok("Footer information has been updated.");

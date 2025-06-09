@@ -12,5 +12,6 @@ namespace PersonalWebSite.Model.ViewModels.BlogViewModels
         public string Content { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CoverImageUrl { get; set; }
+        public string UserId { get; set; }
     }
 }

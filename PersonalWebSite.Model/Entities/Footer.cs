@@ -10,5 +10,6 @@ namespace PersonalWebSite.Model.Entities
     {
         public int FooterId { get; set; }
         public string? Description { get; set; }
+        public string UserId { get; set; }
     }
 }

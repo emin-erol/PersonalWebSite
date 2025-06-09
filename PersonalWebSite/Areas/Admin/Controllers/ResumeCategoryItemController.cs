@@ -5,6 +5,7 @@ using PersonalWebSite.Dto.ItemTechDtos;
 using PersonalWebSite.Dto.ResumeCategoryDtos;
 using PersonalWebSite.Dto.ResumeCategoryItemDtos;
 using PersonalWebSite.Dto.TechIUsedDtos;
+using System.Security.Claims;
 using System.Text;
 
 namespace PersonalWebSite.Areas.Admin.Controllers
@@ -23,8 +24,10 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         [Route("Index")]
         public async Task<IActionResult> Index()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync("https://localhost:7007/api/ResumeCategoryItems/GetResumeCategoryItemsWithTechIUsed");
+            var response = await client.GetAsync("https://localhost:7007/api/ResumeCategoryItems/GetResumeCategoryItemsWithTechIUsedByUserId/" + userId);
             if (response.IsSuccessStatusCode)
             {
                 var jsonData = await response.Content.ReadAsStringAsync();
@@ -40,9 +43,11 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         [Route("CreateResumeCategoryItemModal")]
         public async Task<IActionResult> CreateResumeCategoryItemModal()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
             var client = _httpClientFactory.CreateClient();
-            var responseTechIUsed = await client.GetAsync("https://localhost:7007/api/TechsIUsed");
-            var responseResumeCategory = await client.GetAsync("https://localhost:7007/api/ResumeCategories");
+            var responseTechIUsed = await client.GetAsync("https://localhost:7007/api/TechsIUsed/GetTechIUsedsByUserId/" + userId);
+            var responseResumeCategory = await client.GetAsync("https://localhost:7007/api/ResumeCategories/GetResumeCategoriesByUserId/" + userId);
             if (responseTechIUsed.IsSuccessStatusCode && responseResumeCategory.IsSuccessStatusCode)
             {
                 var techIUsedJson = await responseTechIUsed.Content.ReadAsStringAsync();

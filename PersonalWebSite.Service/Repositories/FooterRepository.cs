@@ -59,5 +59,21 @@ namespace PersonalWebSite.Service.Repositories
 
 			return result;
 		}
-	}
+
+        public async Task<List<GetFooterWithSocialMediaViewModel>> GetFooterWithSocialMediaByUserId(string userId)
+        {
+            var footers = await _context.Footers.Where(x => x.UserId == userId).ToListAsync();
+            var socialMedias = await _context.SocialMedias.Where(x => x.UserId == userId).ToListAsync();
+
+            var result = footers.Select(footer => new GetFooterWithSocialMediaViewModel
+            {
+                FooterId = footer.FooterId,
+                Description = footer.Description,
+                UserId = userId,
+                SocialMedias = socialMedias
+            }).ToList();
+
+            return result;
+        }
+    }
 }

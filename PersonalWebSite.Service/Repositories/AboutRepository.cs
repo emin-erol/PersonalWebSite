@@ -45,9 +45,10 @@ namespace PersonalWebSite.Service.Repositories
             await base.UpdateAsync(entity);
         }
 
-        public async Task<List<GetAboutWithSkillViewModel>> GetAboutWithSkill()
+        public async Task<List<GetAboutWithSkillViewModel>> GetAboutWithSkill(string userId)
         {
             var result = await _context.Abouts
+                .Where(x => x.UserId == userId)
                 .Include(x => x.Skills)
                 .Select(x => new GetAboutWithSkillViewModel
                 {
@@ -59,6 +60,7 @@ namespace PersonalWebSite.Service.Repositories
                     Email = x.Email,
                     CvLink = x.CvLink,
                     ProfileImageLink = x.ProfileImageLink,
+                    UserId = x.UserId,
                     Skills = x.Skills.Select(s => new SkillViewModel
                     {
                         SkillId = s.SkillId,
@@ -85,6 +87,7 @@ namespace PersonalWebSite.Service.Repositories
                     Email = x.Email,
                     CvLink = x.CvLink,
                     ProfileImageLink = x.ProfileImageLink,
+                    UserId = x.UserId,
                     Skills = x.Skills.Select(s => new SkillViewModel
                     {
                         SkillId = s.SkillId,
@@ -96,11 +99,40 @@ namespace PersonalWebSite.Service.Repositories
             return result;
         }
 
-        public async Task<string> GetProfileImageLink()
+        public async Task<string> GetProfileImageLink(string userId)
         {
-            var about = await _context.Abouts.OrderBy(a => a.AboutId).FirstOrDefaultAsync();
+            var about = await _context.Abouts
+                .Where (a => a.UserId == userId)
+                .OrderBy(a => a.AboutId).FirstOrDefaultAsync();
 
             return about!.ProfileImageLink ?? string.Empty;
+        }
+
+        public async Task<List<GetAboutWithSkillViewModel>> GetAboutWithSkillByUserId(string userId)
+        {
+            var result = await _context.Abouts
+                .Where(a => a.UserId == userId)
+                .Include(x => x.Skills)
+                .Select(x => new GetAboutWithSkillViewModel
+                {
+                    AboutId = x.AboutId,
+                    StartMessage = x.StartMessage,
+                    ProfileMessage = x.ProfileMessage,
+                    BirthDate = x.BirthDate,
+                    Title = x.Title,
+                    Email = x.Email,
+                    CvLink = x.CvLink,
+                    ProfileImageLink = x.ProfileImageLink,
+                    UserId = x.UserId,
+                    Skills = x.Skills.Select(s => new SkillViewModel
+                    {
+                        SkillId = s.SkillId,
+                        SkillName = s.SkillName
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return result;
         }
     }
 }

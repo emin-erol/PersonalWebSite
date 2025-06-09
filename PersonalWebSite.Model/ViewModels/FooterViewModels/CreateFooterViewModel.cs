@@ -9,5 +9,6 @@ namespace PersonalWebSite.Model.ViewModels.FooterViewModels
 	public class CreateFooterViewModel
 	{
 		public string? Description { get; set; }
-	}
+        public string UserId { get; set; }
+    }
 }
