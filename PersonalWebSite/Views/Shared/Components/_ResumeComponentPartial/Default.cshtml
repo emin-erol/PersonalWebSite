@@ -2,62 +2,83 @@
 
 <section id="resume" class="grey-section">
 
-	<div class="row section-intro">
-		<div class="col-twelve">
+    <div class="row section-intro">
+        <div class="col-twelve">
+            <h5>Resume</h5>
+            <h1>More of my credentials.</h1>
+        </div>
+    </div>
 
-			<h5>Resume</h5>
-			<h1>More of my credentials.</h1>
+    @if (Model != null && Model.Any())
+    {
+        foreach (var resumeCategory in Model)
+        {
+            <div class="row resume-timeline">
 
-		</div>
-	</div>
+                <div class="col-twelve resume-header">
+                    <h2>@resumeCategory.CategoryName</h2>
+                </div>
 
-	@foreach (var resumeCategory in Model)
-	{
-		<div class="row resume-timeline">
+                @if (resumeCategory.ResumeCategoryItems != null && resumeCategory.ResumeCategoryItems.Any())
+                {
+                    foreach (var resumeCategoryItem in resumeCategory.ResumeCategoryItems)
+                    {
+                        <div class="col-twelve">
+                            <div class="timeline-wrap">
+                                <div class="timeline-block">
 
-			<div class="col-twelve resume-header">
+                                    <div class="timeline-ico">
+                                        <i class="@resumeCategoryItem.IconUrl"></i>
+                                    </div>
 
-				<h2>@resumeCategory.CategoryName</h2>
+                                    <div class="timeline-header">
+                                        <h3>@resumeCategoryItem.Title</h3>
+                                        <p>
+                                            @resumeCategoryItem.StartDate.ToString("dd.MM.yyyy") -
+                                            @resumeCategoryItem.EndDate.ToString("dd.MM.yyyy")
+                                        </p>
 
-			</div>
+                                        @if (resumeCategoryItem.TechNames != null && resumeCategoryItem.TechNames.Any())
+                                        {
+                                            <ul class="skill-bars">
+                                                @foreach (var itemTech in resumeCategoryItem.TechNames)
+                                                {
+                                                    <li><strong>@itemTech</strong></li>
+                                                }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <p><em>Teknoloji bilgisi eklenmemiş.</em></p>
+                                        }
+                                    </div>
 
-			@foreach (var resumeCategoryItem in resumeCategory.ResumeCategoryItems)
-			{
-				<div class="col-twelve">
+                                    <div class="timeline-content">
+                                        <h4>@resumeCategoryItem.Header</h4>
+                                        <p>@resumeCategoryItem.Description</p>
+                                    </div>
 
-					<div class="timeline-wrap">
-
-						<div class="timeline-block">
-
-							<div class="timeline-ico">
-								<i class="@resumeCategoryItem.IconUrl"></i>
-							</div>
-
-							<div class="timeline-header">
-								<h3>@resumeCategoryItem.Title</h3>
-								<p>@resumeCategoryItem.StartDate.ToString("dd.MM.yyyy") - @resumeCategoryItem.EndDate.ToString("dd.MM.yyyy")</p>
-								<ul class="skill-bars">
-									@foreach (var itemTech in resumeCategoryItem.TechNames)
-									{
-										<li>
-											<strong>@itemTech</strong>
-										</li>
-									}
-								</ul>
-							</div>
-
-							<div class="timeline-content">
-								<h4>@resumeCategoryItem.Header</h4>
-								<p>@resumeCategoryItem.Description</p>
-							</div>
-
-						</div>
-
-					</div>
-
-				</div>
-			}
-		</div>
-	}
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-twelve">
+                        <p><em>Bu kategoriye ait veri bulunmamaktadır.</em></p>
+                    </div>
+                }
+            </div>
+        }
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-twelve">
+                <p><em>Herhangi bir özgeçmiş verisi bulunamadı.</em></p>
+            </div>
+        </div>
+    }
 
 </section>

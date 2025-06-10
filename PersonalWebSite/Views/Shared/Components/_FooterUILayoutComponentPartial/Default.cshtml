@@ -8,9 +8,23 @@
             <div class="row">
                 <div class="col-six tab-full pull-right social">
                     <ul class="footer-social" style="margin-top: 20px;">
-                        @foreach (var socialMedia in item.SocialMedias)
+                        @if (item?.SocialMedias != null && item.SocialMedias.Any())
                         {
-                            <li><a href="@socialMedia.SocialMediaUrl" target="_blank"><i class="fa fa-brands fa-@socialMedia.IconUrl"></i></a></li>
+                            foreach (var socialMedia in item.SocialMedias)
+                            {
+                                var iconClass = !string.IsNullOrWhiteSpace(socialMedia?.IconUrl) ? socialMedia.IconUrl : "globe";
+                                var url = !string.IsNullOrWhiteSpace(socialMedia?.SocialMediaUrl) ? socialMedia.SocialMediaUrl : "#";
+
+                                <li>
+                                    <a href="@url" target="_blank">
+                                        <i class="fa fa-brands fa-@iconClass"></i>
+                                    </a>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            <li><span>No social media links available.</span></li>
                         }
                     </ul>
                 </div>
@@ -18,10 +32,20 @@
                 <div class="col-six tab-full" style="margin-top:20px;">
                     <div class="copyright">
                         <span>© Copyright @DateTime.Now.Year</span>
-                        <span><strong>@item.Description</strong></span>
+                        <span><strong>@(string.IsNullOrWhiteSpace(item?.Description) ? "No description provided." : item.Description)</strong></span>
                     </div>
                 </div>
             </div>
         </footer>
     }
+}
+else
+{
+    <footer>
+        <div class="row">
+            <div class="col-12 text-center">
+                <p>No footer information available.</p>
+            </div>
+        </div>
+    </footer>
 }

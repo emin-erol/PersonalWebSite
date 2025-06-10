@@ -31,6 +31,14 @@ namespace PersonalWebSite.WebApi.Controllers
             return BadRequest("Hiçbir kullanıcı bulunamadı.");
         }
 
+        [HttpGet("FindByName/{userName}")]
+        public async Task<IActionResult> FindByName(string userName)
+        {
+            var user = await _managementRepository.FindByNameAsync(userName);
+
+            return Ok(user);
+        }
+
         [HttpGet("CheckEmailConfirmed/{email}")]
         public async Task<IActionResult> CheckEmailConfirmed(string email)
         {

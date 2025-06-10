@@ -83,10 +83,8 @@ namespace PersonalWebSite.Service.Repositories
         {
             var result = await (from rci in _context.ResumeCategoryItems
                                 join rc in _context.ResumeCategories on rci.ResumeCategoryId equals rc.ResumeCategoryId
-                                join it in _context.ItemTeches on rci.ResumeCategoryItemId equals it.ResumeCategoryItemId
-                                join ti in _context.TechsIUsed on it.TechIUsedId equals ti.TechIUsedId
                                 where rci.ResumeCategoryItemId == id
-                                group ti by new
+                                select new
                                 {
                                     rci.ResumeCategoryItemId,
                                     rci.Title,
@@ -96,24 +94,31 @@ namespace PersonalWebSite.Service.Repositories
                                     rci.Header,
                                     rci.Description,
                                     rc.ResumeCategoryId,
-                                    rc.CategoryName
-                                } into g
-                                select new ResumeCategoryItemsWithTechIUsedViewModel
-                                {
-                                    ResumeCategoryItemId = g.Key.ResumeCategoryItemId,
-                                    Title = g.Key.Title,
-                                    StartDate = g.Key.StartDate,
-                                    EndDate = g.Key.EndDate,
-                                    IconUrl = g.Key.IconUrl,
-                                    Header = g.Key.Header,
-                                    Description = g.Key.Description,
-                                    ResumeCategoryId = g.Key.ResumeCategoryId,
-                                    ResumeCategoryName = g.Key.CategoryName,
-                                    TechNames = g.Select(x => x.Name).ToList()
+                                    rc.CategoryName,
+                                    Techs = (from it in _context.ItemTeches
+                                             join ti in _context.TechsIUsed on it.TechIUsedId equals ti.TechIUsedId
+                                             where it.ResumeCategoryItemId == rci.ResumeCategoryItemId
+                                             select ti.Name).ToList()
                                 }).FirstOrDefaultAsync();
 
-            return result;
+            if (result == null)
+                return null;
+
+            return new ResumeCategoryItemsWithTechIUsedViewModel
+            {
+                ResumeCategoryItemId = result.ResumeCategoryItemId,
+                Title = result.Title,
+                StartDate = result.StartDate,
+                EndDate = result.EndDate,
+                IconUrl = result.IconUrl,
+                Header = result.Header,
+                Description = result.Description,
+                ResumeCategoryId = result.ResumeCategoryId,
+                ResumeCategoryName = result.CategoryName,
+                TechNames = result.Techs ?? new List<string>()
+            };
         }
+
 
         public async Task<List<ResumeCategoryItemViewModel>> GetResumeCategoryItemsByResumeCategoryId(int resumeCategoryId)
         {
@@ -138,10 +143,12 @@ namespace PersonalWebSite.Service.Repositories
         {
             var result = await (from rci in _context.ResumeCategoryItems
                                 join rc in _context.ResumeCategories on rci.ResumeCategoryId equals rc.ResumeCategoryId
-                                join it in _context.ItemTeches on rci.ResumeCategoryItemId equals it.ResumeCategoryItemId
-                                join ti in _context.TechsIUsed on it.TechIUsedId equals ti.TechIUsedId
                                 where rc.UserId == userId
-                                group ti by new
+                                join it in _context.ItemTeches on rci.ResumeCategoryItemId equals it.ResumeCategoryItemId into itemTechGroup
+                                from it in itemTechGroup.DefaultIfEmpty()
+                                join ti in _context.TechsIUsed on it.TechIUsedId equals ti.TechIUsedId into techGroup
+                                from ti in techGroup.DefaultIfEmpty()
+                                select new
                                 {
                                     rci.ResumeCategoryItemId,
                                     rci.Title,
@@ -151,9 +158,22 @@ namespace PersonalWebSite.Service.Repositories
                                     rci.Header,
                                     rci.Description,
                                     rc.ResumeCategoryId,
-                                    rc.CategoryName
-                                } into g
-                                select new ResumeCategoryItemsWithTechIUsedViewModel
+                                    rc.CategoryName,
+                                    TechName = ti != null ? ti.Name : null
+                                })
+                                .GroupBy(x => new
+                                {
+                                    x.ResumeCategoryItemId,
+                                    x.Title,
+                                    x.StartDate,
+                                    x.EndDate,
+                                    x.IconUrl,
+                                    x.Header,
+                                    x.Description,
+                                    x.ResumeCategoryId,
+                                    x.CategoryName
+                                })
+                                .Select(g => new ResumeCategoryItemsWithTechIUsedViewModel
                                 {
                                     ResumeCategoryItemId = g.Key.ResumeCategoryItemId,
                                     Title = g.Key.Title,
@@ -164,10 +184,12 @@ namespace PersonalWebSite.Service.Repositories
                                     Description = g.Key.Description,
                                     ResumeCategoryId = g.Key.ResumeCategoryId,
                                     ResumeCategoryName = g.Key.CategoryName,
-                                    TechNames = g.Select(x => x.Name).ToList()
-                                }).ToListAsync();
+                                    TechNames = g.Where(x => x.TechName != null).Select(x => x.TechName).Distinct().ToList()
+                                })
+                                .ToListAsync();
 
             return result;
         }
+
     }
 }

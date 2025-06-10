@@ -3,8 +3,8 @@
 @{
     ViewData["Title"] = "UpdateResumeCategoryItemModal";
     Layout = "~/Areas/Admin/Views/UILayout/Index.cshtml";
-    var resumeCategories = ViewBag.ResumeCategories as Dictionary<int, string>;
-    var techsIUsed = ViewBag.TechsIUsed as Dictionary<int, string>;
+    var resumeCategories = ViewBag.ResumeCategories as Dictionary<int, string> ?? new();
+    var techsIUsed = ViewBag.TechsIUsed as Dictionary<int, string> ?? new();
     int techCount = techsIUsed!.Count;
 }
 
@@ -29,7 +29,7 @@
                                     <option value="" disabled>Bir Kategori Seçiniz</option>
                                     @foreach (var resumeCategory in resumeCategories!)
                                     {
-                                        if(resumeCategory.Key == Model.ResumeCategoryId)
+                                        if (Model != null && resumeCategory.Key == Model.ResumeCategoryId)
                                         {
                                             <option value="@resumeCategory.Key" selected>@resumeCategory.Value</option>
                                         } else
@@ -75,23 +75,17 @@
                                 <div class="row">
                                     @foreach (var techIUsed in techsIUsed)
                                     {
-                                        if (techIUsed.Key % 4 == 0 && techIUsed.Key != 0)
-                                        {
-                                            <div class="row"></div>
-                                        }
-
                                         <div class="col-md-3">
-                                            @if (Model.TechNames.Contains(techIUsed.Value))
-                                            {
-                                                <input type="checkbox" style="cursor:pointer;" name="ItemTeches" value="@techIUsed.Value" id="techIUsed_@techIUsed.Key" checked/>
-                                            }
+                                            <input type="checkbox"
+                                                   style="cursor:pointer;"
+                                                   name="ItemTeches"
+                                                   value="@techIUsed.Value"
+                                                   id="techIUsed_@techIUsed.Key"
+                                            @(Model?.TechNames?.Contains(techIUsed.Value) == true ? "checked" : "") />
 
-                                            else
-                                            {
-                                                <input type="checkbox" style="cursor:pointer;" name="ItemTeches" value="@techIUsed.Value" id="techIUsed_@techIUsed.Key" />
-                                            }
-
-                                            <label for="techIUsed_@techIUsed.Key" style="cursor:pointer;">@techIUsed.Value</label>
+                                            <label for="techIUsed_@techIUsed.Key" style="cursor:pointer;">
+                                                @techIUsed.Value
+                                            </label>
                                         </div>
                                     }
                                 </div>

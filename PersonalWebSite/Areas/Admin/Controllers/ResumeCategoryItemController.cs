@@ -123,10 +123,12 @@ namespace PersonalWebSite.Areas.Admin.Controllers
         [Route("UpdateResumeCategoryItemModal/{id}")]
         public async Task<IActionResult> UpdateResumeCategoryItemModal(int id)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
             var client = _httpClientFactory.CreateClient();
             var response = await client.GetAsync("https://localhost:7007/api/ResumeCategoryItems/GetResumeCategoryItemWithTechIUsedByResumeCategoryItemId/" + id);
             var responseResumeCategory = await client.GetAsync("https://localhost:7007/api/ResumeCategories");
-            var responseTechIUsed = await client.GetAsync("https://localhost:7007/api/TechsIUsed");
+            var responseTechIUsed = await client.GetAsync("https://localhost:7007/api/TechsIUsed/GetTechIUsedsByUserId/" + userId);
 
             if (response.IsSuccessStatusCode)
             {

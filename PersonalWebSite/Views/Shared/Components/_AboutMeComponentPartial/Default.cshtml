@@ -1,69 +1,87 @@
 ﻿@model List<AboutWithSkillDto>
 
-@{
+@if (Model != null && Model.Any())
+{
     var link = Model[0].CvLink;
-}
 
-@foreach(var item in Model)
+    foreach (var item in Model)
+    {
+        <section id="about">
+
+            <div class="row section-intro">
+                <div class="col-twelve">
+                    <h5>About</h5>
+                    <h1>@item.StartMessage</h1>
+                </div>
+            </div>
+
+            <div class="row about-content">
+
+                <div class="col-six tab-full">
+                    <h3>Profile</h3>
+                    <p class="description">&nbsp;&nbsp;&nbsp;@item.ProfileMessage</p>
+
+                    <ul class="info-list">
+                        <li>
+                            <strong>Birth Date:</strong>
+                            <span>@item.BirthDate.ToString("dd.MM.yyyy")</span>
+                        </li>
+                        <li>
+                            <strong>Job:</strong>
+                            <span>@item.Title</span>
+                        </li>
+                        <li>
+                            <strong>Email:</strong>
+                            <span>@item.Email</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-six tab-full">
+                    <h3>Skills</h3>
+                    <ul class="skill-bars">
+                        @if (item.Skills != null && item.Skills.Any())
+                        {
+                            foreach (var skill in item.Skills)
+                            {
+                                <li>
+                                    <strong>@skill.SkillName</strong>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            <li>Yetenek bilgisi bulunamadı.</li>
+                        }
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="row button-section">
+                <div class="col-twelve">
+                    @if (!string.IsNullOrEmpty(item.CvLink))
+                    {
+                        <a href="@item.CvLink" id="downloadCv" title="Download CV" class="button button-primary">Download CV</a>
+                    }
+                    else
+                    {
+                        <p>CV bağlantısı bulunmamaktadır.</p>
+                    }
+                </div>
+            </div>
+
+        </section>
+    }
+}
+else
 {
     <section id="about">
-
         <div class="row section-intro">
             <div class="col-twelve">
-
                 <h5>About</h5>
-                <h1>@item.StartMessage</h1>
-
+                <p>Kullanıcıya ait hakkında bilgisi bulunmamaktadır.</p>
             </div>
         </div>
-
-        <div class="row about-content">
-
-            <div class="col-six tab-full">
-
-                <h3>Profile</h3>
-                <p class="description">&nbsp;&nbsp;&nbsp;@item.ProfileMessage</p>
-
-                <ul class="info-list">
-                    <li>
-                        <strong>Birth Date:</strong>
-                        <span>@item.BirthDate.ToString("dd.MM.yyyy")</span>
-                    </li>
-                    <li>
-                        <strong>Job:</strong>
-                        <span>@item.Title</span>
-                    </li>
-                    <li>
-                        <strong>Email:</strong>
-                        <span>@item.Email</span>
-                    </li>
-
-                </ul>
-
-            </div>
-
-            <div class="col-six tab-full">
-
-                <h3>Skills</h3>
-
-                <ul class="skill-bars">
-                    @foreach(var skill in Model[0].Skills)
-                    {
-                        <li>
-                            <strong>@skill.SkillName</strong>
-                        </li>
-                    }
-                </ul>
-
-            </div>
-
-        </div>
-
-        <div class="row button-section">
-            <div class="col-twelve">
-                <a href="@item.CvLink" id="downloadCv" title="Download CV" class="button button-primary">Download CV</a>
-            </div>
-        </div>
-
     </section>
 }

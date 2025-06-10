@@ -1,18 +1,25 @@
 ﻿@model List<ResultContactInfoDto>
 
 <div class="row contact-info">
-    @foreach(var item in Model)
+    @if (Model != null && Model.Any())
     {
-        <div class="col-four tab-full">
+        foreach (var item in Model)
+        {
+            <div class="col-four tab-full">
+                <div class="icon">
+                    <i class="@(string.IsNullOrWhiteSpace(item?.IconUrl) ? "fa fa-info-circle" : item.IconUrl)"></i>
+                </div>
 
-            <div class="icon">
-                <i class="@item.IconUrl"></i>
+                <h5>@(string.IsNullOrWhiteSpace(item?.Title) ? "No Title" : item.Title)</h5>
+
+                <p>@(string.IsNullOrWhiteSpace(item?.Description) ? "No description available." : item.Description)</p>
             </div>
-
-            <h5>@item.Title</h5>
-
-            <p>@item.Description</p>
-
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center">
+            <p>No contact information available.</p>
         </div>
     }
 </div>

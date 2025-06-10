@@ -14,5 +14,6 @@ namespace PersonalWebSite.Dto.ContactMailDtos
         public string? Message { get; set; }
         public bool IsRead { get; set; }
         public DateTime ShippingDate { get; set; }
+        public string? UserId { get; set; }
     }
 }

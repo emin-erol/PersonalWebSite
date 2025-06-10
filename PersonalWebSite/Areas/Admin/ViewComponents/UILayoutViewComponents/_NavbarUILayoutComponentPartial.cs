@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace PersonalWebSite.Areas.Admin.ViewComponents.UILayoutViewComponents
 {
@@ -7,6 +8,8 @@ namespace PersonalWebSite.Areas.Admin.ViewComponents.UILayoutViewComponents
     {
         public IViewComponentResult Invoke()
         {
+            ViewBag.UserName = UserClaimsPrincipal?.FindFirst(ClaimTypes.Name)?.Value;
+
             return View();
         }
     }

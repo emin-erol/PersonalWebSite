@@ -3,7 +3,7 @@
 <div class="row contact-form">
 
     <div class="col-twelve">
-        <form asp-controller="Default" method="post" asp-action="SendEmail">
+        <form asp-controller="Default" method="post" asp-action="SendEmail" asp-route-username="@ViewBag.UserName">
             <fieldset>
 
                 <div class="form-field">
